@@ -9,12 +9,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Search, Filter } from 'lucide-react';
 import { SplinePlaceholder } from '@/components/spline-placeholder';
 import { cn } from '@/lib/utils';
 import { productCategories } from '@/lib/products';
 import { ProductGrid } from '@/components/product-grid';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
 
 export const metadata = {
   title: 'Products & Solutions',
@@ -39,6 +40,17 @@ export default function ProductsPage() {
       </section>
 
       <div className="container pb-16 md:pb-24">
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+            <div className="relative flex-grow">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input placeholder="Search products..." className="pl-10 w-full" />
+            </div>
+            <Button variant="outline" className="flex-shrink-0">
+                <Filter className="mr-2 h-5 w-5" />
+                Filters
+            </Button>
+        </div>
+
         <Tabs defaultValue={productCategories[0].id} className="w-full">
           <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-10 h-auto">
             {productCategories.map((category) => (
