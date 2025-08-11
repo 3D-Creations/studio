@@ -51,20 +51,20 @@ const productCategories = [
 ];
 
 const portfolioItems = [
-  { src: 'https://placehold.co/600x400.png', alt: 'Lenticular Poster', hint: 'lenticular poster' },
-  { src: 'https://placehold.co/600x400.png', alt: 'Custom Paperweight', hint: 'corporate gift' },
-  { src: 'https://placehold.co/600x400.png', alt: 'Branded Notebook', hint: 'custom stationery' },
-  { src: 'https://placehold.co/600x400.png', alt: '3D Coasters', hint: 'promotional item' },
-  { src: 'https://placehold.co/600x400.png', alt: 'Pharma Visual Aid', hint: 'medical diagram' },
-  { src: 'https://placehold.co/600x400.png', alt: 'Promotional Brochure', hint: 'product brochure' },
+  { src: 'https://images.unsplash.com/photo-1610747632338-9f63d0fa841b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bGVudGljdWxhciUyMHBvc3RlcnxlbnwwfHx8fDE3NTQ5MTY1MDl8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Lenticular Poster', hint: 'lenticular poster' },
+  { src: 'https://images.unsplash.com/photo-1625552187662-ac3fac11fcf1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjb3Jwb3JhdGUlMjBnaWZ0fGVufDB8fHx8MTc1NDkxNjUwOXww&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Custom Paperweight', hint: 'corporate gift' },
+  { src: 'https://images.unsplash.com/photo-1625859767996-1606064a595b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjdXN0b20lMjBzdGF0aW9uZXJ5fGVufDB8fHx8MTc1NDkxNjUwOXww&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Branded Notebook', hint: 'custom stationery' },
+  { src: 'https://images.unsplash.com/photo-1590451340392-01a70fcd5b96?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxwcm9tb3Rpb25hbCUyMGl0ZW18ZW58MHx8fHwxNzU0OTE2NTA5fDA&ixlib=rb-4.1.0&q=80&w=1080', alt: '3D Coasters', hint: 'promotional item' },
+  { src: 'https://images.unsplash.com/photo-1532153470116-e8c2088b8ac1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwZGlhZ3JhbXxlbnwwfHx8fDE3NTQ5MTY1MDl8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Pharma Visual Aid', hint: 'medical diagram' },
+  { src: 'https://images.unsplash.com/photo-1567688535100-5dc79f1ca57e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwcm9kdWN0JTIwYnJvY2h1cmV8ZW58MHx8fHwxNzU0OTE2NTA5fDA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Promotional Brochure', hint: 'product brochure' },
 ];
 
 const clientLogos = [
-  { src: 'https://placehold.co/150x50.png', alt: 'Pharma Client 1', hint: 'pharmaceutical logo' },
-  { src: 'https://placehold.co/150x50.png', alt: 'Corporate Client 2', hint: 'tech company' },
-  { src: 'https://placehold.co/150x50.png', alt: 'Pharma Client 3', hint: 'healthcare logo' },
-  { src: 'https://placehold.co/150x50.png', alt: 'Ad Agency 4', hint: 'creative agency' },
-  { src: 'https://placehold.co/150x50.png', alt: 'Pharma Client 5', hint: 'biotech logo' },
+  { src: 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwaGFybWFjZXV0aWNhbCUyMGxvZ298ZW58MHx8fHwxNzU0OTE2NTA4fDA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Pharma Client 1', hint: 'pharmaceutical logo' },
+  { src: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx0ZWNoJTIwY29tcGFueXxlbnwwfHx8fDE3NTQ5MTY1MDh8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Corporate Client 2', hint: 'tech company' },
+  { src: 'https://images.unsplash.com/photo-1636249253913-40e83d5423e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxoZWFsdGhjYXJlJTIwbG9nb3xlbnwwfHx8fDE3NTQ5MTY1MDh8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Pharma Client 3', hint: 'healthcare logo' },
+  { src: 'https://images.unsplash.com/photo-1704918605018-6449befbc85b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjcmVhdGl2ZSUyMGFnZW5jeXxlbnwwfHx8fDE3NTQ5MTY1MDh8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Ad Agency 4', hint: 'creative agency' },
+  { src: 'https://images.unsplash.com/photo-1596088359637-8d614753fb28?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxiaW90ZWNoJTIwbG9nb3xlbnwwfHx8fDE3NTQ5MTY1MDl8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Pharma Client 5', hint: 'biotech logo' },
 ];
 
 const testimonials = [
