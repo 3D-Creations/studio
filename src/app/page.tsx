@@ -1,3 +1,6 @@
+
+"use client"
+
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -21,6 +24,8 @@ import {
 import { ArrowRight, Gift, Layers, PackageCheck, FileText, Quote } from 'lucide-react';
 import { SplinePlaceholder } from '@/components/spline-placeholder';
 import { cn } from '@/lib/utils';
+import Autoplay from "embla-carousel-autoplay"
+import React from 'react';
 
 const productCategories = [
   {
@@ -82,6 +87,13 @@ const testimonials = [
 
 
 export default function Home() {
+  const autoplayPlugin = React.useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: true })
+  );
+  const testimonialsAutoplayPlugin = React.useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: true })
+  );
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -143,6 +155,9 @@ export default function Home() {
               align: "start",
               loop: true,
             }}
+            plugins={[autoplayPlugin.current]}
+            onMouseEnter={autoplayPlugin.current.stop}
+            onMouseLeave={autoplayPlugin.current.reset}
             className="w-full"
           >
             <CarouselContent>
@@ -202,6 +217,9 @@ export default function Home() {
           <Carousel
             className="w-full max-w-4xl mx-auto"
             opts={{ loop: true }}
+            plugins={[testimonialsAutoplayPlugin.current]}
+            onMouseEnter={testimonialsAutoplayPlugin.current.stop}
+            onMouseLeave={testimonialsAutoplayPlugin.current.reset}
           >
             <CarouselContent>
               {testimonials.map((testimonial, index) => (
