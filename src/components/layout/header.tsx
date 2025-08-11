@@ -28,12 +28,12 @@ export function Header() {
         </div>
         
         <div className="flex-1 justify-center hidden md:flex">
-          <nav className="flex items-center space-x-6 text-sm font-medium">
+          <nav className="flex items-center space-x-4 text-sm font-medium">
             {navLinks.map(link => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="transition-colors hover:text-primary"
+                className="transition-colors hover:text-primary whitespace-nowrap"
               >
                 {link.label}
               </Link>
