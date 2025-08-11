@@ -11,7 +11,7 @@ import {
   SidebarInset,
 } from "@/components/ui/sidebar"
 import { Logo } from "@/components/logo"
-import { LayoutDashboard, Rocket } from "lucide-react"
+import { LayoutDashboard, Rocket, Inbox } from "lucide-react"
 
 export default function AdminLayout({
   children,
@@ -31,6 +31,12 @@ export default function AdminLayout({
                 <SidebarMenuButton href="/admin" tooltip="Dashboard">
                   <LayoutDashboard />
                   Dashboard
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton href="/admin/inquiries" tooltip="Inquiries">
+                  <Inbox />
+                  Inquiries
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>

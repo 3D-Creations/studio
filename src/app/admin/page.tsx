@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Rocket } from 'lucide-react'
+import { Rocket, Inbox } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata = {
@@ -22,6 +22,22 @@ export default function AdminDashboardPage() {
         </p>
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Card className="hover:border-primary transition-colors">
+          <Link href="/admin/inquiries" className="block">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                View Inquiries
+              </CardTitle>
+              <Inbox className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold font-headline">Mock Data</div>
+              <p className="text-xs text-muted-foreground">
+                See all submitted contact form inquiries here.
+              </p>
+            </CardContent>
+          </Link>
+        </Card>
         <Card className="hover:border-primary transition-colors">
           <Link href="/admin/seo-optimizer" className="block">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
