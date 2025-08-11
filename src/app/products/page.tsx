@@ -1,29 +1,29 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button, buttonVariants } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { ArrowRight, Search, Filter } from 'lucide-react';
+
+"use client";
+
+import { useState } from 'react';
+import { Search, Filter } from 'lucide-react';
 import { SplinePlaceholder } from '@/components/spline-placeholder';
-import { cn } from '@/lib/utils';
 import { productCategories } from '@/lib/products';
 import { ProductGrid } from '@/components/product-grid';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-
-export const metadata = {
-  title: 'Products & Solutions',
-  description: 'Explore our wide range of 3D lenticular prints, corporate gifts, custom stationery, and promotional items.',
-};
-
+import { Button } from '@/components/ui/button';
 
 export default function ProductsPage() {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredCategories = productCategories.map(category => ({
+    ...category,
+    products: category.products.filter(product =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    ),
+  }));
+
   return (
     <div className="relative overflow-hidden">
       <SplinePlaceholder />
@@ -43,7 +43,12 @@ export default function ProductsPage() {
         <div className="flex flex-col md:flex-row gap-4 mb-8">
             <div className="relative flex-grow">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input placeholder="Search products..." className="pl-10 w-full" />
+                <Input
+                  placeholder="Search products..."
+                  className="pl-10 w-full"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
             </div>
             <Button variant="outline" className="flex-shrink-0">
                 <Filter className="mr-2 h-5 w-5" />
@@ -59,7 +64,7 @@ export default function ProductsPage() {
               </TabsTrigger>
             ))}
           </TabsList>
-          {productCategories.map((category) => (
+          {filteredCategories.map((category) => (
             <TabsContent key={category.id} value={category.id}>
                <div className="mb-10 text-center md:text-left">
                   <h2 className="text-3xl md:text-4xl font-bold font-headline">{category.name}</h2>
