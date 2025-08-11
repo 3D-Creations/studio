@@ -1,3 +1,4 @@
+
 export interface Product {
   name: string;
   image: string;
@@ -34,14 +35,14 @@ export const productCategories: ProductCategory[] = [
     name: 'Pharma & Corporate Gifts',
     description: 'High-impact, memorable gifts designed to strengthen your brand presence in the pharmaceutical and corporate sectors.',
     products: [
-      { name: '3D Paperweights', image: 'https://placehold.co/400x300.png', hint: 'crystal paperweight' },
-      { name: 'Anatomical Models', image: 'https://placehold.co/400x300.png', hint: 'anatomical model' },
-      { name: 'Custom Pen Stands', image: 'https://placehold.co/400x300.png', hint: 'desk organizer' },
-      { name: 'Executive Gift Sets', image: 'https://placehold.co/400x300.png', hint: 'luxury gift' },
-      { name: 'Molecule Models', image: 'https://placehold.co/400x300.png', hint: 'molecule model' },
-      { name: 'Branded Mugs', image: 'https://placehold.co/400x300.png', hint: 'coffee mug' },
-      { name: 'Tech Gadgets', image: 'https://placehold.co/400x300.png', hint: 'tech gadget' },
-      { name: 'Tote Bags', image: 'https://placehold.co/400x300.png', hint: 'canvas tote' },
+      { name: '3D Paperweights', image: 'https://images.unsplash.com/photo-1593259213062-57b0ce5906cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjcnlzdGFsJTIwcGFwZXJ3ZWlnaHR8ZW58MHx8fHwxNzU0OTE4NzcyfDA&ixlib=rb-4.1.0&q=80&w=1080', hint: 'crystal paperweight' },
+      { name: 'Anatomical Models', image: 'https://images.unsplash.com/photo-1729339983325-cc7fb91a9aa6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhbmF0b21pY2FsJTIwbW9kZWx8ZW58MHx8fHwxNzU0OTE4NzcxfDA&ixlib=rb-4.1.0&q=80&w=1080', hint: 'anatomical model' },
+      { name: 'Custom Pen Stands', image: 'https://images.unsplash.com/photo-1639917290489-4a4eb2a6aa3a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxkZXNrJTIwb3JnYW5pemVyfGVufDB8fHx8MTc1NDkxODc3MHww&ixlib=rb-4.1.0&q=80&w=1080', hint: 'desk organizer' },
+      { name: 'Executive Gift Sets', image: 'https://images.unsplash.com/photo-1729530140636-a137e341a895?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxsdXh1cnklMjBnaWZ0fGVufDB8fHx8MTc1NDkxODc3Mnww&ixlib=rb-4.1.0&q=80&w=1080', hint: 'luxury gift' },
+      { name: 'Molecule Models', image: 'https://images.unsplash.com/photo-1707863080685-177f4f6e850d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtb2xlY3VsZSUyMG1vZGVsfGVufDB8fHx8MTc1NDkxODc3MXww&ixlib=rb-4.1.0&q=80&w=1080', hint: 'molecule model' },
+      { name: 'Branded Mugs', image: 'https://images.unsplash.com/photo-1520031473529-2c06dea61853?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjb2ZmZWUlMjBtdWd8ZW58MHx8fHwxNzU0OTE4NzcxfDA&ixlib=rb-4.1.0&q=80&w=1080', hint: 'coffee mug' },
+      { name: 'Tech Gadgets', image: 'https://images.unsplash.com/photo-1542751110-97427bbecf20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx0ZWNoJTIwZ2FkZ2V0fGVufDB8fHx8MTc1NDkxODc3MXww&ixlib=rb-4.1.0&q=80&w=1080', hint: 'tech gadget' },
+      { name: 'Tote Bags', image: 'https://images.unsplash.com/photo-1721111260675-b0cf573ef81e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y2FudmFzJTIwdG90ZXxlbnwwfHx8fDE3NTQ5MTg3NzF8MA&ixlib=rb-4.1.0&q=80&w=1080', hint: 'canvas tote' },
     ],
   },
   {
