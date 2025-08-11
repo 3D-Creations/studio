@@ -2,17 +2,27 @@
 "use client";
 
 import { useState } from 'react';
-import { Search, Filter, X } from 'lucide-react';
+import { Search, Filter, X, Check, ChevronsUpDown } from 'lucide-react';
 import { SplinePlaceholder } from '@/components/spline-placeholder';
-import { productCategories, type ProductCategory } from '@/lib/products';
+import { productCategories, type ProductCategory, type Product } from '@/lib/products';
 import { ProductGrid } from '@/components/product-grid';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState(productCategories[0].id);
+  const [sortOption, setSortOption] = useState('default');
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -22,12 +32,28 @@ export default function ProductsPage() {
     setSearchQuery('');
   }
 
+  const sortProducts = (products: Product[]) => {
+    switch (sortOption) {
+      case 'az':
+        return [...products].sort((a, b) => a.name.localeCompare(b.name));
+      case 'za':
+        return [...products].sort((a, b) => b.name.localeCompare(a.name));
+      default:
+        return products;
+    }
+  }
+
   const filteredCategories = productCategories.map(category => ({
     ...category,
-    products: category.products.filter(product =>
+    products: sortProducts(category.products.filter(product =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase())
-    ),
+    )),
   })).filter(category => category.products.length > 0);
+
+  const allFilteredProducts = sortProducts(
+    productCategories.flatMap(category => category.products)
+      .filter(product => product.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   const isSearching = searchQuery.length > 0;
 
@@ -62,24 +88,32 @@ export default function ProductsPage() {
                   </Button>
                 )}
             </div>
-            <Button variant="outline" className="flex-shrink-0">
-                <Filter className="mr-2 h-5 w-5" />
-                Filters
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="flex-shrink-0">
+                    <Filter className="mr-2 h-5 w-5" />
+                    Filters
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup value={sortOption} onValueChange={setSortOption}>
+                  <DropdownMenuRadioItem value="default">Default</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="az">A-Z</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="za">Z-A</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
         </div>
 
         {isSearching ? (
            <div className="space-y-12">
-             {filteredCategories.length > 0 ? (
-                filteredCategories.map((category) => (
-                    <div key={category.id}>
-                        <div className="mb-10 text-center md:text-left">
-                          <h2 className="text-3xl md:text-4xl font-bold font-headline">{category.name}</h2>
-                          <p className="text-lg text-muted-foreground mt-2 max-w-3xl mx-auto md:mx-0">{category.description}</p>
-                        </div>
-                        <ProductGrid products={category.products} />
-                    </div>
-                ))
+             {allFilteredProducts.length > 0 ? (
+                <div>
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline mb-10 text-center md:text-left">Search Results</h2>
+                    <ProductGrid products={allFilteredProducts} />
+                </div>
              ) : (
                 <div className="text-center py-16">
                     <p className="text-lg text-muted-foreground">No products found for "{searchQuery}".</p>
@@ -95,7 +129,7 @@ export default function ProductsPage() {
                   </TabsTrigger>
                 ))}
               </TabsList>
-              {productCategories.map((category) => (
+              {filteredCategories.map((category) => (
                 <TabsContent key={category.id} value={category.id}>
                    <div className="mb-10 text-center md:text-left">
                       <h2 className="text-3xl md:text-4xl font-bold font-headline">{category.name}</h2>
