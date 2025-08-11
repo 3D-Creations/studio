@@ -88,11 +88,12 @@ export default function Home() {
       <section className="relative w-full py-32 md:py-48 flex items-center justify-center text-center overflow-hidden">
         <SplinePlaceholder />
         <div className="container px-4 md:px-6 z-10">
+          <p className="mb-2 text-lg font-semibold text-primary">3D Creations Private Limited</p>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 font-headline text-balance text-black dark:text-white">
             Innovation in Every Dimension
           </h1>
           <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground mb-8 text-balance">
-            3D Creations Private Limited: Your premium partner for 3D lenticular printing and specialized pharma gifting solutions.
+            Your premium partner for 3D lenticular printing and specialized pharma gifting solutions.
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/products" className={cn(buttonVariants({ size: 'lg' }), "bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity")}>
