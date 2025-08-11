@@ -21,10 +21,13 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <div className="mr-4 hidden md:flex">
+        <div className="flex-1 items-center hidden md:flex">
           <Link href="/" className="mr-6">
             <Logo />
           </Link>
+        </div>
+        
+        <div className="flex-1 justify-center hidden md:flex">
           <nav className="flex items-center space-x-6 text-sm font-medium">
             {navLinks.map(link => (
               <Link
