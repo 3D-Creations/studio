@@ -88,7 +88,7 @@ export default function Home() {
       <section className="relative w-full py-32 md:py-48 flex items-center justify-center text-center overflow-hidden">
         <SplinePlaceholder />
         <div className="container px-4 md:px-6 z-10">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 font-headline text-balance text-white">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 font-headline text-balance text-black dark:text-white">
             Innovation in Every Dimension
           </h1>
           <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground mb-8 text-balance">
