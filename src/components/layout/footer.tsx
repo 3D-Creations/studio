@@ -22,9 +22,9 @@ export function Footer() {
       <div className="container py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <Link href="/" className="mb-4 inline-block">
+            <div className="mb-4 inline-block">
               <Logo />
-            </Link>
+            </div>
             <p className="text-sm text-muted-foreground">
               Innovating in every dimension with premium 3D printing and gifting solutions.
             </p>
