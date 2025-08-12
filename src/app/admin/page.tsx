@@ -11,6 +11,8 @@ import { getDailyMotivation } from '@/ai/flows/get-daily-motivation'
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Admin Dashboard',
 }
