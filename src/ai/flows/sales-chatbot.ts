@@ -27,13 +27,13 @@ const companyResearchTool = ai.defineTool(
   }
 );
 
-export const SalesChatbotInputSchema = z.object({
+const SalesChatbotInputSchema = z.object({
   history: z.array(z.any()),
   prompt: z.string(),
 });
 export type SalesChatbotInput = z.infer<typeof SalesChatbotInputSchema>;
 
-export const SalesChatbotOutputSchema = z.string();
+const SalesChatbotOutputSchema = z.string();
 export type SalesChatbotOutput = z.infer<typeof SalesChatbotOutputSchema>;
 
 const prompt = ai.definePrompt({
