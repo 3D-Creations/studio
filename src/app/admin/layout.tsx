@@ -48,17 +48,14 @@ export default function AdminLayout({
     <SidebarProvider>
       <div className="flex min-h-screen">
         <Sidebar>
-          <SidebarHeader>
+          <SidebarHeader className="flex items-center justify-between p-4">
             <Logo />
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
+            <SidebarMenu className="flex flex-row items-center space-x-2">
               <SidebarMenuItem>
                 <Link href="/admin" passHref>
                   <SidebarMenuButton asChild tooltip="Dashboard">
                     <>
                       <LayoutDashboard />
-                      Dashboard
                     </>
                   </SidebarMenuButton>
                 </Link>
@@ -68,7 +65,6 @@ export default function AdminLayout({
                   <SidebarMenuButton asChild tooltip="Inquiries">
                     <>
                       <Inbox />
-                      Inquiries
                     </>
                   </SidebarMenuButton>
                 </Link>
@@ -78,13 +74,12 @@ export default function AdminLayout({
                   <SidebarMenuButton asChild tooltip="SEO Optimizer">
                     <>
                       <Rocket />
-                      SEO Optimizer
                     </>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
             </SidebarMenu>
-          </SidebarContent>
+          </SidebarHeader>
            <SidebarFooter>
             <SidebarSeparator />
             <div className="flex items-center gap-3 p-2">
