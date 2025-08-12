@@ -15,13 +15,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useEffect, useState } from 'react'
 import { collection, onSnapshot, query, orderBy, doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
-import { Clipboard, ExternalLink, Bot, Loader2 } from 'lucide-react'
+import { Clipboard, ExternalLink, Bot, Loader2, Eye } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -149,8 +157,36 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
                    {inquiry.company && <div className="text-sm text-muted-foreground">{inquiry.company}</div>}
                 </TableCell>
                 <TableCell>
-                  <div className="font-medium">{inquiry.productInterest}</div>
-                   <div className="text-sm text-muted-foreground line-clamp-2">{inquiry.message}</div>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div className="cursor-pointer">
+                        <div className="font-medium hover:underline">{inquiry.productInterest}</div>
+                        <div className="text-sm text-muted-foreground line-clamp-2">{inquiry.message}</div>
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>{inquiry.productInterest}</DialogTitle>
+                        <DialogDescription>
+                          Full inquiry from {inquiry.name}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 pt-4">
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-1">Message</h4>
+                          <p className="text-sm text-muted-foreground bg-secondary/50 p-3 rounded-md whitespace-pre-wrap">{inquiry.message}</p>
+                        </div>
+                         <div>
+                          <h4 className="font-semibold text-foreground mb-1">Contact Details</h4>
+                          <ul className="text-sm text-muted-foreground list-disc list-inside bg-secondary/50 p-3 rounded-md">
+                            <li><strong>Name:</strong> {inquiry.name}</li>
+                            <li><strong>Email:</strong> {inquiry.email}</li>
+                            {inquiry.company && <li><strong>Company:</strong> {inquiry.company}</li>}
+                          </ul>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </TableCell>
                 <TableCell>{inquiry.date}</TableCell>
                 <TableCell>
