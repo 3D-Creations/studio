@@ -18,25 +18,25 @@ const teamMembers = [
   {
     name: 'Aarav Sharma',
     role: 'Founder & CEO',
-    image: 'https://placehold.co/400x400.png',
+    image: 'https://images.unsplash.com/photo-1724414768978-21ee5420b925?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtYWxlJTIwcHJvZmVzc2lvbmFsfGVufDB8fHx8MTc1NDk4MjgwNnww&ixlib=rb-4.1.0&q=80&w=1080',
     hint: 'male professional'
   },
   {
     name: 'Priya Singh',
     role: 'Head of Design',
-    image: 'https://placehold.co/400x400.png',
+    image: 'https://images.unsplash.com/photo-1753164597332-cb53627871e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmZW1hbGUlMjBkZXNpZ25lcnxlbnwwfHx8fDE3NTQ5ODI4MDZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
     hint: 'female designer'
   },
   {
     name: 'Rohan Mehta',
     role: 'Production Lead',
-    image: 'https://placehold.co/400x400.png',
+    image: 'https://images.unsplash.com/photo-1581093809942-95dd1e9af628?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYWxlJTIwZW5naW5lZXJ8ZW58MHx8fHwxNzU0OTgyODA2fDA&ixlib=rb-4.1.0&q=80&w=1080',
     hint: 'male engineer'
   },
   {
     name: 'Anika Gupta',
     role: 'Pharma Accounts Manager',
-    image: 'https://placehold.co/400x400.png',
+    image: 'https://images.unsplash.com/photo-1642257834579-eee89ff3e9fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmZW1hbGUlMjBtYW5hZ2VyfGVufDB8fHx8MTc1NDk4MjgwN3ww&ixlib=rb-4.1.0&q=80&w=1080',
     hint: 'female manager'
   },
 ];
