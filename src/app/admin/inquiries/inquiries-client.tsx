@@ -134,7 +134,7 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
             <TableRow>
               <TableHead>Contact</TableHead>
               <TableHead>Interest</TableHead>
-              <TableHead className="hidden lg:table-cell">Date & Time</TableHead>
+              <TableHead>Date & Time</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Assigned To</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -152,7 +152,7 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
                   <div className="font-medium">{inquiry.productInterest}</div>
                    <div className="text-sm text-muted-foreground line-clamp-2">{inquiry.message}</div>
                 </TableCell>
-                <TableCell className="hidden lg:table-cell">{inquiry.date}</TableCell>
+                <TableCell>{inquiry.date}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
