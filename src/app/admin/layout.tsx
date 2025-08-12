@@ -52,24 +52,30 @@ export default function AdminLayout({
               <SidebarMenuItem>
                 <Link href="/admin" passHref>
                   <SidebarMenuButton asChild tooltip="Dashboard">
-                    <LayoutDashboard />
-                    Dashboard
+                    <>
+                      <LayoutDashboard />
+                      Dashboard
+                    </>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <Link href="/admin/inquiries" passHref>
                   <SidebarMenuButton asChild tooltip="Inquiries">
-                    <Inbox />
-                    Inquiries
+                    <>
+                      <Inbox />
+                      Inquiries
+                    </>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <Link href="/admin/seo-optimizer" passHref>
                   <SidebarMenuButton asChild tooltip="SEO Optimizer">
-                    <Rocket />
-                    SEO Optimizer
+                    <>
+                      <Rocket />
+                      SEO Optimizer
+                    </>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
