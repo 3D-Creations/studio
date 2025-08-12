@@ -11,7 +11,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const GenerateLeadReplyInputSchema = z.object({
+const GenerateLeadReplyInputSchema = z.object({
   leadName: z.string().describe('The name of the potential customer.'),
   companyName: z
     .string()
@@ -26,7 +26,7 @@ export type GenerateLeadReplyInput = z.infer<
   typeof GenerateLeadReplyInputSchema
 >;
 
-export const GenerateLeadReplyOutputSchema = z.object({
+const GenerateLeadReplyOutputSchema = z.object({
   companyResearch: z
     .string()
     .describe(
@@ -69,13 +69,6 @@ Your task is to generate a personalized cold reply to a new lead.
 `,
 });
 
-export async function generateLeadReply(
-  input: GenerateLeadReplyInput
-): Promise<GenerateLeadReplyOutput> {
-  const {output} = await prompt(input);
-  return output!;
-}
-
 const generateLeadReplyFlow = ai.defineFlow(
   {
     name: 'generateLeadReplyFlow',
@@ -87,3 +80,10 @@ const generateLeadReplyFlow = ai.defineFlow(
     return output!;
   }
 );
+
+export async function generateLeadReply(
+  input: GenerateLeadReplyInput
+): Promise<GenerateLeadReplyOutput> {
+  const {output} = await prompt(input);
+  return output!;
+}
