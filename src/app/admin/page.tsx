@@ -18,7 +18,7 @@ export default function AdminDashboardPage() {
       <div>
         <h1 className="text-3xl font-bold font-headline">Admin Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome to the 3D Creations Hub admin panel.
+          Welcome to the 3D Creations Private Limited admin panel.
         </p>
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

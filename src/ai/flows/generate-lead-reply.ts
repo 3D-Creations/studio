@@ -46,7 +46,7 @@ const prompt = ai.definePrompt({
   name: 'generateLeadReplyPrompt',
   input: {schema: GenerateLeadReplyInputSchema},
   output: {schema: GenerateLeadReplyOutputSchema},
-  prompt: `You are an expert Sales Development Representative for "3D Creations Hub", a company specializing in 3D lenticular printing, custom corporate gifts, and pharma-focused promotional items.
+  prompt: `You are an expert Sales Development Representative for "3D Creations Private Limited", a company specializing in 3D lenticular printing, custom corporate gifts, and pharma-focused promotional items.
 
 Your task is to generate a personalized cold reply to a new lead.
 
@@ -65,21 +65,9 @@ Your task is to generate a personalized cold reply to a new lead.
 - Briefly connect our services to their company's potential needs based on your research.
 - Keep the tone professional, friendly, and helpful.
 - End with a clear call to action, like scheduling a brief call.
-- Sign off as "The Team at 3D Creations Hub".
+- Sign off as "The Team at 3D Creations Private Limited".
 `,
 });
-
-const generateLeadReplyFlow = ai.defineFlow(
-  {
-    name: 'generateLeadReplyFlow',
-    inputSchema: GenerateLeadReplyInputSchema,
-    outputSchema: GenerateLeadReplyOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);
 
 export async function generateLeadReply(
   input: GenerateLeadReplyInput

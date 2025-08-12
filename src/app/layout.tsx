@@ -9,8 +9,8 @@ import { AuthProvider } from '@/hooks/use-auth';
 
 export const metadata: Metadata = {
   title: {
-    default: '3D Creations Hub',
-    template: '%s | 3D Creations Hub',
+    default: '3D Creations Private Limited',
+    template: '%s | 3D Creations Private Limited',
   },
   description: 'Premium 3D lenticular printing and custom gifting solutions.',
 };
