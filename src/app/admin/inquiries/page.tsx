@@ -1,3 +1,4 @@
+
 import {
   PageHeader,
   PageHeaderDescription,
@@ -7,6 +8,7 @@ import { InquiriesClient } from './inquiries-client'
 import { db } from '@/lib/firebase'
 import { collection, getDocs, orderBy, query } from 'firebase/firestore'
 import type { Inquiry } from './inquiries-client'
+import { generateLeadReply } from '@/ai/flows/generate-lead-reply'
 
 export const metadata = {
   title: 'Inquiries',
@@ -25,14 +27,15 @@ async function getInquiries() {
         company: data.company || '',
         productInterest: data.productInterest,
         message: data.message,
+        attachmentUrl: data.attachmentUrl || '',
         // Convert Firestore Timestamp to a serializable format (ISO string)
-        date: data.createdAt?.toDate()?.toLocaleDateString('en-US') || new Date().toLocaleDateString('en-US'),
+        date: data.createdAt?.toDate()?.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) || new Date().toLocaleString('en-US'),
         status: data.status,
+        assignedTo: data.assignedTo || '',
       }
     });
     return inquiries;
 }
-
 
 export default async function InquiriesPage() {
   const inquiries = await getInquiries();
@@ -45,7 +48,7 @@ export default async function InquiriesPage() {
           View and manage all inquiries submitted through your website's contact form.
         </PageHeaderDescription>
       </PageHeader>
-      <InquiriesClient initialInquiries={inquiries} />
+      <InquiriesClient initialInquiries={inquiries} generateLeadReply={generateLeadReply} />
     </div>
   )
 }

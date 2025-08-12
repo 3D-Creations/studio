@@ -1,9 +1,11 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"; 
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -17,8 +19,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { ArrowRight } from "lucide-react"
-import { db } from "@/lib/firebase"
+import { ArrowRight, Loader2 } from "lucide-react"
+import { db, storage } from "@/lib/firebase"
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ACCEPTED_FILE_TYPES = ["image/jpeg", "image/png", "image/webp", "video/mp4", "application/pdf"];
+
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -26,6 +32,13 @@ const formSchema = z.object({
   company: z.string().optional(),
   productInterest: z.string().min(2, "Please specify your product interest."),
   message: z.string().min(10, "Message must be at least 10 characters."),
+  attachment: z
+    .any()
+    .refine((files) => !files || files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 10MB.`)
+    .refine(
+      (files) => !files || ACCEPTED_FILE_TYPES.includes(files?.[0]?.type),
+      ".jpg, .jpeg, .png, .webp, .mp4 and .pdf files are accepted."
+    ).optional()
 })
 
 export function ContactForm() {
@@ -39,15 +52,31 @@ export function ContactForm() {
       company: "",
       productInterest: "",
       message: "",
+      attachment: undefined,
     },
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      let attachmentUrl = "";
+      const file = values.attachment?.[0];
+
+      if (file) {
+        const storageRef = ref(storage, `inquiry-attachments/${Date.now()}-${file.name}`);
+        const uploadResult = await uploadBytes(storageRef, file);
+        attachmentUrl = await getDownloadURL(uploadResult.ref);
+      }
+
       await addDoc(collection(db, "inquiries"), {
-        ...values,
+        name: values.name,
+        email: values.email,
+        company: values.company || '',
+        productInterest: values.productInterest,
+        message: values.message,
+        attachmentUrl: attachmentUrl,
         createdAt: serverTimestamp(),
-        status: 'New'
+        status: 'New',
+        assignedTo: ''
       });
 
       toast({
@@ -141,9 +170,32 @@ export function ContactForm() {
             </FormItem>
           )}
         />
+         <FormField
+          control={form.control}
+          name="attachment"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Attach File (Optional)</FormLabel>
+              <FormControl>
+                <Input type="file" onChange={(e) => field.onChange(e.target.files)} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button type="submit" size="lg" className="w-full md:w-auto" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? 'Sending...' : 'Send Message'}
-            {!form.formState.isSubmitting && <ArrowRight className="ml-2 h-5 w-5" />}
+            {form.formState.isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Sending...
+              </>
+             ) : (
+              <>
+                Send Message
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </>
+             )
+            }
         </Button>
       </form>
     </Form>
