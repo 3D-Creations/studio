@@ -21,10 +21,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <div className="flex-1 items-center hidden md:flex">
-          <Link href="/" className="mr-6">
-            <Logo />
-          </Link>
+        <div className="mr-6 flex items-center">
+          <Logo />
         </div>
         
         <div className="flex-1 justify-center hidden md:flex">
@@ -51,9 +49,9 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
-              <Link href="/" className="mb-6 flex items-center">
+              <div className="mb-6">
                 <Logo />
-              </Link>
+              </div>
               <div className="flex flex-col space-y-4">
                 {navLinks.map(link => (
                   <Link
