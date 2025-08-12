@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Rocket, Inbox, Sparkles } from 'lucide-react'
+import { MessageSquare, Inbox, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { getDailyMotivation } from '@/ai/flows/get-daily-motivation'
 
@@ -41,16 +41,16 @@ export default async function AdminDashboardPage() {
           </Link>
         </Card>
         <Card className="hover:border-primary transition-colors">
-          <Link href="/admin/seo-optimizer" className="block h-full">
+          <Link href="/admin/sales-chatbot" className="block h-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                SEO Optimizer
+                AI Sales Chatbot
               </CardTitle>
-              <Rocket className="h-4 w-4 text-muted-foreground" />
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <p className="text-xs text-muted-foreground">
-                Generate SEO keywords and descriptions for your content.
+                Ask questions, get lead insights, and perform research.
               </p>
             </CardContent>
           </Link>

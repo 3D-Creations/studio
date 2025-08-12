@@ -17,7 +17,7 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar"
 import { Logo } from "@/components/logo"
-import { LayoutDashboard, Rocket, Inbox, Loader2, LogOut } from "lucide-react"
+import { LayoutDashboard, MessageSquare, Inbox, Loader2, LogOut } from "lucide-react"
 import { useAuth } from '@/hooks/use-auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -74,11 +74,11 @@ export default function AdminLayout({
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <Link href="/admin/seo-optimizer" passHref>
-                  <SidebarMenuButton asChild tooltip="SEO Optimizer">
+                <Link href="/admin/sales-chatbot" passHref>
+                  <SidebarMenuButton asChild tooltip="AI Sales Chatbot">
                     <>
-                      <Rocket />
-                      <span>SEO Optimizer</span>
+                      <MessageSquare />
+                      <span>AI Sales Chatbot</span>
                     </>
                   </SidebarMenuButton>
                 </Link>
