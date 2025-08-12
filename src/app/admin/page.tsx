@@ -5,14 +5,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Rocket, Inbox } from 'lucide-react'
+import { Rocket, Inbox, Sparkles } from 'lucide-react'
 import Link from 'next/link'
+import { getDailyMotivation } from '@/ai/flows/get-daily-motivation'
 
 export const metadata = {
   title: 'Admin Dashboard',
 }
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const motivation = await getDailyMotivation();
+
   return (
     <div className="space-y-8">
       <div>
@@ -23,7 +26,7 @@ export default function AdminDashboardPage() {
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card className="hover:border-primary transition-colors">
-          <Link href="/admin/inquiries" className="block">
+          <Link href="/admin/inquiries" className="block h-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 View Inquiries
@@ -31,7 +34,6 @@ export default function AdminDashboardPage() {
               <Inbox className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold font-headline">Mock Data</div>
               <p className="text-xs text-muted-foreground">
                 See all submitted contact form inquiries here.
               </p>
@@ -39,7 +41,7 @@ export default function AdminDashboardPage() {
           </Link>
         </Card>
         <Card className="hover:border-primary transition-colors">
-          <Link href="/admin/seo-optimizer" className="block">
+          <Link href="/admin/seo-optimizer" className="block h-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 SEO Optimizer
@@ -47,12 +49,25 @@ export default function AdminDashboardPage() {
               <Rocket className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold font-headline">AI-Powered</div>
               <p className="text-xs text-muted-foreground">
                 Generate SEO keywords and descriptions for your content.
               </p>
             </CardContent>
           </Link>
+        </Card>
+         <Card className="col-span-1 md:col-span-2 lg:col-span-1 bg-gradient-to-br from-primary/80 to-accent/80 text-primary-foreground border-none flex flex-col">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-primary-foreground/90">
+              Daily Motivation
+            </CardTitle>
+            <Sparkles className="h-4 w-4 text-primary-foreground/90" />
+          </CardHeader>
+          <CardContent className="flex-grow flex flex-col justify-center">
+            <blockquote className="text-lg font-semibold text-balance">
+              "{motivation.quote}"
+            </blockquote>
+            <cite className="text-sm text-right block mt-2 text-primary-foreground/80">- {motivation.author}</cite>
+          </CardContent>
         </Card>
       </div>
     </div>
