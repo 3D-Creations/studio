@@ -1,12 +1,14 @@
+
 "use client"
 
 import Link from 'next/link';
-import { Menu, Dna } from 'lucide-react';
+import { Menu, Dna, LogOut } from 'lucide-react';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/logo';
+import { useAuth } from '@/hooks/use-auth';
 
 const navLinks = [
   { href: '/about', label: 'About Us' },
@@ -14,10 +16,11 @@ const navLinks = [
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/pharma-special', label: 'Pharma Special' },
   { href: '/contact', label: 'Contact' },
-  { href: '/admin', label: 'Admin' },
 ];
 
 export function Header() {
+  const { user, signOut } = useAuth();
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
@@ -36,6 +39,7 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+             {user && <Link href="/admin" className="transition-colors hover:text-primary whitespace-nowrap">Admin</Link>}
           </nav>
         </div>
 
@@ -62,21 +66,29 @@ export function Header() {
                     {link.label}
                   </Link>
                 ))}
+                {user && <Link href="/admin" className="text-lg transition-colors hover:text-primary">Admin</Link>}
               </div>
             </SheetContent>
           </Sheet>
         </div>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <Link
-            href="/contact"
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "hidden sm:inline-flex bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity"
-            )}
-          >
-            Get a Quote
-          </Link>
+           {user ? (
+            <Button variant="outline" size="sm" onClick={signOut}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          ) : (
+            <Link
+              href="/contact"
+              className={cn(
+                buttonVariants({ variant: "default" }),
+                "hidden sm:inline-flex bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity"
+              )}
+            >
+              Get a Quote
+            </Link>
+          )}
           <ThemeToggle />
         </div>
       </div>
