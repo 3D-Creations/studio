@@ -24,6 +24,8 @@ import { db } from "@/lib/firebase"
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
+  phone: z.string().min(10, "Please enter a valid contact number."),
+  location: z.string().optional(),
   company: z.string().optional(),
   productInterest: z.string().min(2, "Please specify your product interest."),
   message: z.string().min(10, "Message must be at least 10 characters."),
@@ -37,6 +39,8 @@ export function ContactForm() {
     defaultValues: {
       name: "",
       email: "",
+      phone: "",
+      location: "",
       company: "",
       productInterest: "",
       message: "",
@@ -48,6 +52,8 @@ export function ContactForm() {
       await addDoc(collection(db, "inquiries"), {
         name: values.name,
         email: values.email,
+        phone: values.phone,
+        location: values.location || '',
         company: values.company || '',
         productInterest: values.productInterest,
         message: values.message,
@@ -96,6 +102,34 @@ export function ContactForm() {
                 <FormLabel>Email Address</FormLabel>
                 <FormControl>
                   <Input placeholder="john.doe@example.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="grid md:grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Contact No.</FormLabel>
+                <FormControl>
+                  <Input type="tel" placeholder="+91 12345 67890" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Location (Optional)</FormLabel>
+                <FormControl>
+                  <Input placeholder="City, Country" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

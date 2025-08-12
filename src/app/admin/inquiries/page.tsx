@@ -24,6 +24,8 @@ async function getInquiries() {
         id: doc.id,
         name: data.name,
         email: data.email,
+        phone: data.phone || '',
+        location: data.location || '',
         company: data.company || '',
         productInterest: data.productInterest,
         message: data.message,

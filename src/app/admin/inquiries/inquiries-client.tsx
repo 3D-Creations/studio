@@ -48,6 +48,8 @@ export interface Inquiry {
   id: string;
   name: string;
   email: string;
+  phone: string;
+  location: string;
   company: string;
   productInterest: string;
   message: string;
@@ -81,6 +83,8 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
           id: doc.id,
           name: data.name,
           email: data.email,
+          phone: data.phone || '',
+          location: data.location || '',
           company: data.company || '',
           productInterest: data.productInterest,
           message: data.message,
@@ -154,7 +158,9 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
                 <TableCell>
                   <div className="font-medium">{inquiry.name}</div>
                   <div className="text-sm text-muted-foreground">{inquiry.email}</div>
-                   {inquiry.company && <div className="text-sm text-muted-foreground">{inquiry.company}</div>}
+                  {inquiry.phone && <div className="text-sm text-muted-foreground">{inquiry.phone}</div>}
+                  {inquiry.company && <div className="text-sm text-muted-foreground">{inquiry.company}</div>}
+                  {inquiry.location && <div className="text-sm text-muted-foreground">{inquiry.location}</div>}
                 </TableCell>
                 <TableCell>
                   <Dialog>
@@ -181,7 +187,9 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
                           <ul className="text-sm text-muted-foreground list-disc list-inside bg-secondary/50 p-3 rounded-md">
                             <li><strong>Name:</strong> {inquiry.name}</li>
                             <li><strong>Email:</strong> {inquiry.email}</li>
+                            {inquiry.phone && <li><strong>Phone:</strong> {inquiry.phone}</li>}
                             {inquiry.company && <li><strong>Company:</strong> {inquiry.company}</li>}
+                            {inquiry.location && <li><strong>Location:</strong> {inquiry.location}</li>}
                           </ul>
                         </div>
                       </div>
