@@ -28,7 +28,9 @@ const prompt = ai.definePrompt({
 
 Generate a short, punchy, and inspiring motivational quote to kickstart their day. The quote should be relevant to sales, ambition, or creativity.
 
-To ensure variety, use the following random seed to influence your output: {{{seed}}}
+IMPORTANT: Do NOT use a common or cliché quote. It must be unique and surprising. Use the random seed to ensure you generate a different quote every single time.
+
+Random Seed: {{{seed}}}
 `,
 });
 
