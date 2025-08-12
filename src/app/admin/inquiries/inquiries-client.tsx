@@ -134,7 +134,7 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
             <TableRow>
               <TableHead>Contact</TableHead>
               <TableHead>Interest</TableHead>
-              <TableHead className="hidden lg:table-cell">Date</TableHead>
+              <TableHead className="hidden lg:table-cell">Date & Time</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Assigned To</TableHead>
               <TableHead className="text-right">Actions</TableHead>
