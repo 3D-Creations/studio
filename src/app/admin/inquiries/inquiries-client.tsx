@@ -21,7 +21,7 @@ import { Badge } from '@/components/ui/badge'
 import { useEffect, useState } from 'react'
 import { collection, onSnapshot, query, orderBy, doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
-import { Clipboard, Download, ExternalLink, Bot, Loader2 } from 'lucide-react'
+import { Clipboard, ExternalLink, Bot, Loader2 } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,7 +43,6 @@ export interface Inquiry {
   company: string;
   productInterest: string;
   message: string;
-  attachmentUrl?: string;
   date: string;
   status: 'New' | 'In Progress' | 'Contacted' | 'Closed';
   assignedTo?: string;
@@ -77,7 +76,6 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
           company: data.company || '',
           productInterest: data.productInterest,
           message: data.message,
-          attachmentUrl: data.attachmentUrl || '',
           date: data.createdAt?.toDate()?.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) || new Date().toLocaleString('en-US'),
           status: data.status || 'New',
           assignedTo: data.assignedTo || '',
@@ -153,11 +151,6 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
                 <TableCell>
                   <div className="font-medium">{inquiry.productInterest}</div>
                    <div className="text-sm text-muted-foreground line-clamp-2">{inquiry.message}</div>
-                   {inquiry.attachmentUrl && (
-                      <a href={inquiry.attachmentUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1 mt-1">
-                        View Attachment <Download className="h-3 w-3" />
-                      </a>
-                   )}
                 </TableCell>
                 <TableCell className="hidden lg:table-cell">{inquiry.date}</TableCell>
                 <TableCell>

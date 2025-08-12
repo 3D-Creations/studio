@@ -27,7 +27,6 @@ async function getInquiries() {
         company: data.company || '',
         productInterest: data.productInterest,
         message: data.message,
-        attachmentUrl: data.attachmentUrl || '',
         // Convert Firestore Timestamp to a serializable format (ISO string)
         date: data.createdAt?.toDate()?.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) || new Date().toLocaleString('en-US'),
         status: data.status,

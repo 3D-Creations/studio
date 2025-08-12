@@ -2,7 +2,6 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   projectId: "d-creations-hub-k5nyk",
@@ -17,6 +16,5 @@ const firebaseConfig = {
 const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
 const auth = getAuth(app);
-const storage = getStorage(app);
 
-export { db, auth, storage };
+export { db, auth };
