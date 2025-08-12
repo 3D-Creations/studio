@@ -2,6 +2,7 @@
 "use client"
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   SidebarProvider,
@@ -49,22 +50,28 @@ export default function AdminLayout({
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton href="/admin" tooltip="Dashboard">
-                  <LayoutDashboard />
-                  Dashboard
-                </SidebarMenuButton>
+                <Link href="/admin" passHref>
+                  <SidebarMenuButton asChild tooltip="Dashboard">
+                    <LayoutDashboard />
+                    Dashboard
+                  </SidebarMenuButton>
+                </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton href="/admin/inquiries" tooltip="Inquiries">
-                  <Inbox />
-                  Inquiries
-                </SidebarMenuButton>
+                <Link href="/admin/inquiries" passHref>
+                  <SidebarMenuButton asChild tooltip="Inquiries">
+                    <Inbox />
+                    Inquiries
+                  </SidebarMenuButton>
+                </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton href="/admin/seo-optimizer" tooltip="SEO Optimizer">
-                  <Rocket />
-                  SEO Optimizer
-                </SidebarMenuButton>
+                <Link href="/admin/seo-optimizer" passHref>
+                  <SidebarMenuButton asChild tooltip="SEO Optimizer">
+                    <Rocket />
+                    SEO Optimizer
+                  </SidebarMenuButton>
+                </Link>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
