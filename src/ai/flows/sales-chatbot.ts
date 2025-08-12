@@ -10,7 +10,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { search } from 'genkit/tools';
+import { googleAI } from '@genkit-ai/googleai';
 
 const companyResearchTool = ai.defineTool(
   {
@@ -22,7 +22,7 @@ const companyResearchTool = ai.defineTool(
     outputSchema: z.string(),
   },
   async (input) => {
-    const { output } = await search(input.companyName);
+    const { output } = await googleAI.search(input.companyName);
     return JSON.stringify(output);
   }
 );
