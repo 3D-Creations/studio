@@ -75,7 +75,7 @@ export function Header() {
 
         <div className="flex flex-1 items-center justify-end space-x-2">
            {user ? (
-            <Button variant="outline" size="sm" onClick={signOut}>
+            <Button size="sm" onClick={signOut} className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity">
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </Button>
