@@ -31,7 +31,7 @@ import { generateProductDescription } from "@/ai/flows/generate-product-descript
 import React from "react";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
 
 const formSchema = z.object({
   name: z.string().min(3, "Product name must be at least 3 characters."),
@@ -46,7 +46,7 @@ const formSchema = z.object({
     .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
     .refine(
       (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-      ".jpg, .jpeg, .png and .webp files are accepted."
+      ".jpg, .jpeg, .png, .webp, and .gif files are accepted."
     ),
 });
 
@@ -231,7 +231,7 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
                     />
                 </FormControl>
                  <FormDescription>
-                    Image must be a JPG, PNG, or WebP file under 5MB.
+                    Image must be a JPG, PNG, GIF, or WebP file under 5MB.
                 </FormDescription>
                 <FormMessage />
                 </FormItem>
