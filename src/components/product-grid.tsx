@@ -8,19 +8,23 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription as DialogDescriptionPrimitive, // Renamed to avoid conflict
+  DialogDescription as DialogDescriptionPrimitive,
 } from '@/components/ui/dialog';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from '@/components/ui/carousel';
+import { ArrowRight, Loader2, Video, FileImage } from 'lucide-react';
 import { type Product } from '@/components/products-client';
 import { cn } from '@/lib/utils';
 
@@ -58,13 +62,25 @@ export function ProductGrid({ products }: ProductGridProps) {
                 className="aspect-square w-full relative cursor-pointer bg-secondary/30 rounded-t-lg"
                 onClick={() => setSelectedProduct(product)}
               >
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
-                  data-ai-hint={product.hint}
-                />
+                {(product.media && product.media.length > 0) ? (
+                    product.media[0].type === 'image' ? (
+                        <Image
+                            src={product.media[0].url}
+                            alt={product.name}
+                            fill
+                            className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+                            data-ai-hint={product.hint}
+                        />
+                    ) : (
+                         <div className="w-full h-full bg-black rounded-t-lg flex items-center justify-center">
+                            <Video className="h-10 w-10 text-white" />
+                         </div>
+                    )
+                ) : (
+                    <div className="w-full h-full bg-muted flex items-center justify-center">
+                        <FileImage className="h-10 w-10 text-muted-foreground" />
+                    </div>
+                )}
               </div>
               <div className="flex flex-col flex-grow p-3">
                  <div className="flex-grow">
@@ -103,15 +119,40 @@ export function ProductGrid({ products }: ProductGridProps) {
                <DialogTitle className="font-headline text-3xl mb-4">{selectedProduct.name}</DialogTitle>
               <DialogDescriptionPrimitive>
                 <div className="grid md:grid-cols-2 gap-8 items-start">
-                  <div className="aspect-square relative bg-secondary/30 rounded-lg">
-                    <Image
-                      src={selectedProduct.image}
-                      alt={selectedProduct.name}
-                      fill
-                      className="object-contain rounded-lg p-4"
-                      data-ai-hint={selectedProduct.hint}
-                    />
-                  </div>
+                    <Carousel className="w-full">
+                        <CarouselContent>
+                            {(selectedProduct.media && selectedProduct.media.length > 0) ? (
+                                selectedProduct.media.map((media, index) => (
+                                    <CarouselItem key={index}>
+                                        <div className="aspect-square relative bg-secondary/30 rounded-lg">
+                                            {media.type === 'image' ? (
+                                                <Image
+                                                    src={media.url}
+                                                    alt={`${selectedProduct.name} - media ${index + 1}`}
+                                                    fill
+                                                    className="object-contain rounded-lg p-4"
+                                                />
+                                            ) : (
+                                                <video
+                                                    src={media.url}
+                                                    controls
+                                                    className="w-full h-full object-contain rounded-lg"
+                                                />
+                                            )}
+                                        </div>
+                                    </CarouselItem>
+                                ))
+                            ) : (
+                                <CarouselItem>
+                                     <div className="aspect-square relative bg-secondary/30 rounded-lg flex items-center justify-center">
+                                        <FileImage className="h-20 w-20 text-muted-foreground" />
+                                    </div>
+                                </CarouselItem>
+                            )}
+                        </CarouselContent>
+                        <CarouselPrevious />
+                        <CarouselNext />
+                    </Carousel>
                   <div className="space-y-4">
                      <div className="space-y-2 text-lg">
                         <p><span className="font-semibold text-foreground">Name:</span> {selectedProduct.name}</p>
@@ -155,5 +196,3 @@ export function ProductGrid({ products }: ProductGridProps) {
     </div>
   );
 }
-
-

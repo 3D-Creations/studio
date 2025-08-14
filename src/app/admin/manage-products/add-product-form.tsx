@@ -31,8 +31,9 @@ import { generateProductDescription } from "@/ai/flows/generate-product-descript
 import React, { useState } from "react";
 import { AddCategoryDialog } from "./add-category-dialog";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
+const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
+const ACCEPTED_MEDIA_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif", "video/mp4", "video/webm"];
+
 
 const formSchema = z.object({
   name: z.string().min(3, "Product name must be at least 3 characters."),
@@ -42,13 +43,13 @@ const formSchema = z.object({
   categoryId: z.string({
     required_error: "Please select a product category.",
   }),
-  image: z
-    .any()
-    .refine((file) => file, "Product image is required.")
-    .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+  files: z
+    .array(z.any())
+    .min(1, "At least one file is required.")
+    .refine((files) => files.every((file) => file.size <= MAX_FILE_SIZE), `Max file size is 15MB.`)
     .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-      ".jpg, .jpeg, .png, .webp, and .gif files are accepted."
+      (files) => files.every((file) => ACCEPTED_MEDIA_TYPES.includes(file.type)),
+      "Only .jpg, .jpeg, .png, .webp, .gif, .mp4, and .webm files are accepted."
     ),
 });
 
@@ -69,6 +70,7 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
       hint: "",
       description: "",
       price: "On Enquiry",
+      files: [],
     },
   });
 
@@ -115,7 +117,9 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
     formData.append("description", values.description);
     formData.append("categoryId", values.categoryId);
     formData.append("price", values.price);
-    formData.append("image", values.image);
+    values.files.forEach(file => {
+        formData.append('files', file);
+    });
 
     try {
       await addProduct(formData);
@@ -124,10 +128,6 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
         description: `${values.name} has been successfully added.`,
       });
       form.reset();
-      const fileInput = document.getElementById('image-input') as HTMLInputElement;
-      if (fileInput) {
-        fileInput.value = '';
-      }
       onProductAdded(); 
     } catch (error) {
       console.error(error);
@@ -148,8 +148,8 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
   }
   
   const handleCategoryAdded = (newCategoryId: string) => {
-    onProductAdded(); // This re-fetches all data
-    setTimeout(() => { // Give it a moment to re-render with new categories
+    onProductAdded();
+    setTimeout(() => { 
         form.setValue("categoryId", newCategoryId, { shouldValidate: true });
     }, 100);
   }
@@ -214,7 +214,7 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
                     <div className="my-1 border-t"></div>
                     <div 
                         className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                        onSelect={(e) => e.preventDefault()} // Prevent closing
+                        onSelect={(e) => e.preventDefault()}
                         onClick={() => handleCategoryChange('add-new-category')}
                         >
                             <PlusCircle className="mr-2 h-4 w-4" />
@@ -267,21 +267,21 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
         
         <FormField
             control={form.control}
-            name="image"
-            render={({ field: { onChange, value, ...rest } }) => (
+            name="files"
+            render={({ field }) => (
                 <FormItem>
-                <FormLabel>Product Image</FormLabel>
+                <FormLabel>Product Media</FormLabel>
                 <FormControl>
                     <Input 
-                        id="image-input"
-                        type="file" 
-                        accept={ACCEPTED_IMAGE_TYPES.join(",")}
-                        onChange={(e) => onChange(e.target.files ? e.target.files[0] : null)}
-                        {...rest}
+                        id="files-input"
+                        type="file"
+                        multiple
+                        accept={ACCEPTED_MEDIA_TYPES.join(",")}
+                        onChange={(e) => field.onChange(e.target.files ? Array.from(e.target.files) : [])}
                     />
                 </FormControl>
                  <FormDescription>
-                    Image must be a JPG, PNG, GIF, or WebP file under 5MB.
+                    Upload one or more images or videos (JPG, PNG, GIF, MP4, WebP, etc.). Max 15MB each.
                 </FormDescription>
                 <FormMessage />
                 </FormItem>

@@ -31,14 +31,19 @@ import { AddProductForm } from "./add-product-form";
 import { EditProductDialog } from "./edit-product-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, FileImage, Video } from "lucide-react";
 import { AddCategoryDialog } from "./add-category-dialog";
 
+
+export interface ProductMedia {
+  url: string;
+  type: 'image' | 'video';
+}
 
 export interface Product {
   id: string;
   name: string;
-  image: string;
+  media: ProductMedia[];
   hint: string;
   description?: string;
   price?: string;
@@ -68,7 +73,7 @@ async function getProductData(): Promise<ProductCategory[]> {
             return {
                 id: prodDoc.id,
                 name: productData.name,
-                image: productData.image,
+                media: productData.media || [{ url: productData.image, type: 'image' }], // Backwards compatibility
                 hint: productData.hint,
                 description: productData.description,
                 price: productData.price,
@@ -162,18 +167,24 @@ export default function ManageProductsPage() {
                                             <div key={product.id} className="relative group cursor-pointer" onClick={() => setEditingProduct({product, categoryId: category.id})}>
                                                 <Card className="overflow-hidden transition-all duration-300 group-hover:shadow-xl group-hover:scale-105">
                                                     <CardContent className="p-0">
-                                                        {product.image ? (
-                                                          <Image
-                                                              src={product.image}
+                                                        {(product.media && product.media.length > 0) ? (
+                                                          product.media[0].type === 'image' ? (
+                                                            <Image
+                                                              src={product.media[0].url}
                                                               alt={product.name}
                                                               width={200}
                                                               height={200}
                                                               className="w-full h-auto object-cover aspect-square rounded-t-lg"
                                                               data-ai-hint={product.hint}
-                                                          />
+                                                            />
+                                                          ) : (
+                                                            <div className="w-full h-auto object-cover aspect-square rounded-t-lg bg-slate-900 flex items-center justify-center">
+                                                              <Video className="h-10 w-10 text-white" />
+                                                            </div>
+                                                          )
                                                         ) : (
                                                           <div className="w-full h-auto object-cover aspect-square rounded-t-lg bg-muted flex items-center justify-center">
-                                                              <span className="text-xs text-muted-foreground">No Image</span>
+                                                              <FileImage className="h-10 w-10 text-muted-foreground" />
                                                           </div>
                                                         )}
                                                     </CardContent>

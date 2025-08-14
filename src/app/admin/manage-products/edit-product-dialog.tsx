@@ -16,12 +16,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Trash2, Video, FileImage } from "lucide-react";
 import { updateProduct } from "./actions";
-import { type Product } from "./page";
+import { type Product, type ProductMedia } from "./page";
 import { Textarea } from "@/components/ui/textarea";
 import { generateProductDescription } from "@/ai/flows/generate-product-description";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -33,21 +33,22 @@ import {
 import Image from "next/image";
 import { DeleteProductButton } from "./delete-product-button";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
+const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
+const ACCEPTED_MEDIA_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif", "video/mp4", "video/webm"];
+
 
 const formSchema = z.object({
   name: z.string().min(3, "Product name must be at least 3 characters."),
   hint: z.string().min(2, "Hint must be at least 2 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   price: z.string().min(1, "Price is required."),
-  image: z
-    .any()
+  files: z
+    .array(z.any())
     .optional()
-    .refine((file) => !file || file.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+    .refine((files) => !files || files.every((file) => file.size <= MAX_FILE_SIZE), `Max file size is 15MB.`)
     .refine(
-      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
-      ".jpg, .jpeg, .png, .webp, and .gif files are accepted."
+      (files) => !files || files.every((file) => ACCEPTED_MEDIA_TYPES.includes(file.type)),
+      "Only .jpg, .jpeg, .png, .webp, .gif, .mp4, and .webm files are accepted."
     ),
 });
 
@@ -62,6 +63,7 @@ interface EditProductDialogProps {
 export function EditProductDialog({ product, categoryId, isOpen, onClose, onProductUpdated }: EditProductDialogProps) {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = React.useState(false);
+  const [currentMedia, setCurrentMedia] = useState<ProductMedia[]>(product.media || []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,11 +72,15 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
       hint: product.hint || "",
       description: product.description || "",
       price: product.price || "On Enquiry",
-      image: undefined,
+      files: [],
     },
   });
 
   const { isSubmitting } = form.formState;
+  
+  const removeMedia = (index: number) => {
+    setCurrentMedia(currentMedia.filter((_, i) => i !== index));
+  }
 
   const handleGenerateDescription = async () => {
     const productName = form.getValues("name");
@@ -89,7 +95,6 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
     
     setIsGenerating(true);
     try {
-      // We don't have category name here, but the productName should be enough
       const result = await generateProductDescription({ productName, categoryName: "" });
       form.setValue("description", result.description, { shouldValidate: true });
       toast({
@@ -115,9 +120,11 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
     formData.append("hint", values.hint);
     formData.append("description", values.description);
     formData.append("price", values.price);
-    formData.append("existingImageUrl", product.image);
-    if (values.image) {
-      formData.append("image", values.image);
+    formData.append("existingMedia", JSON.stringify(currentMedia));
+    if (values.files) {
+        values.files.forEach(file => {
+            formData.append('files', file);
+        });
     }
 
     try {
@@ -159,9 +166,36 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
             </DialogHeader>
             <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="flex justify-center my-4">
-                    <Image src={product.image} alt={product.name} width={150} height={150} className="rounded-lg object-cover aspect-square" />
+                <div className="space-y-2">
+                    <FormLabel>Current Media</FormLabel>
+                    {currentMedia.length > 0 ? (
+                        <div className="flex flex-wrap gap-2 p-2 border rounded-md">
+                        {currentMedia.map((media, index) => (
+                            <div key={index} className="relative group w-24 h-24">
+                                {media.type === 'image' ? (
+                                    <Image src={media.url} alt={`Product media ${index + 1}`} fill className="rounded-md object-cover" />
+                                ) : (
+                                    <div className="w-full h-full bg-black rounded-md flex items-center justify-center">
+                                        <Video className="h-8 w-8 text-white"/>
+                                    </div>
+                                )}
+                                <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => removeMedia(index)}
+                                >
+                                <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        ))}
+                        </div>
+                    ) : (
+                        <p className="text-sm text-muted-foreground">No media currently attached.</p>
+                    )}
                 </div>
+
                 <div className="grid md:grid-cols-2 gap-6">
                 <FormField
                     control={form.control}
@@ -229,21 +263,21 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
 
                 <FormField
                     control={form.control}
-                    name="image"
-                    render={({ field: { onChange, value, ...rest } }) => (
+                    name="files"
+                    render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Replace Image (Optional)</FormLabel>
+                        <FormLabel>Add More Media</FormLabel>
                         <FormControl>
-                            <Input 
-                                id="image-input-edit"
-                                type="file" 
-                                accept={ACCEPTED_IMAGE_TYPES.join(",")}
-                                onChange={(e) => onChange(e.target.files ? e.target.files[0] : null)}
-                                {...rest}
+                             <Input 
+                                id="files-input-edit"
+                                type="file"
+                                multiple
+                                accept={ACCEPTED_MEDIA_TYPES.join(",")}
+                                onChange={(e) => field.onChange(e.target.files ? Array.from(e.target.files) : [])}
                             />
                         </FormControl>
                         <FormDescription>
-                            Upload a new file to replace the current image.
+                            Upload additional files for this product.
                         </FormDescription>
                         <FormMessage />
                         </FormItem>
@@ -254,7 +288,7 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
                   <DeleteProductButton 
                     categoryId={categoryId} 
                     productId={product.id}
-                    productImage={product.image}
+                    productMedia={product.media}
                     onProductDeleted={handleProductDeleted} 
                   />
                   <div className="flex flex-col-reverse sm:flex-row sm:space-x-2">

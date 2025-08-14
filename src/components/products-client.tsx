@@ -16,10 +16,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+export interface ProductMedia {
+  url: string;
+  type: 'image' | 'video';
+}
+
 export interface Product {
   id: string;
   name: string;
-  image: string;
+  media: ProductMedia[];
   hint: string;
   description?: string;
   price?: string;

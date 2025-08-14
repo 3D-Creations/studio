@@ -17,22 +17,24 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Trash2 } from "lucide-react";
 import { deleteProduct } from "./actions";
 import { useState } from "react";
+import { ProductMedia } from "./page";
 
 interface DeleteProductButtonProps {
   categoryId: string;
   productId: string;
-  productImage?: string;
+  productMedia?: ProductMedia[];
   onProductDeleted: () => void;
 }
 
-export function DeleteProductButton({ categoryId, productId, productImage, onProductDeleted }: DeleteProductButtonProps) {
+export function DeleteProductButton({ categoryId, productId, productMedia, onProductDeleted }: DeleteProductButtonProps) {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await deleteProduct(categoryId, productId, productImage);
+      const mediaJson = productMedia ? JSON.stringify(productMedia) : undefined;
+      await deleteProduct(categoryId, productId, mediaJson);
       toast({
         title: "Product Deleted",
         description: "The product has been successfully removed.",
@@ -63,7 +65,7 @@ export function DeleteProductButton({ categoryId, productId, productImage, onPro
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete the
-            product from the database and its image from storage.
+            product from the database and its media from storage.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
