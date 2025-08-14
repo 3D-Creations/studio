@@ -24,7 +24,7 @@ import { ArrowRight, Loader2 } from 'lucide-react';
 import { type Product } from '@/components/products-client';
 import { cn } from '@/lib/utils';
 
-const PRODUCTS_PER_PAGE = 8;
+const PRODUCTS_PER_PAGE = 10;
 
 interface ProductGridProps {
   products: Product[];
@@ -48,44 +48,44 @@ export function ProductGrid({ products }: ProductGridProps) {
   return (
     <div>
       <Dialog open={!!selectedProduct} onOpenChange={(isOpen) => !isOpen && setSelectedProduct(null)}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
           {products.slice(0, visibleProducts).map((product, index) => (
             <Card 
               key={product.id || index}
-              className="flex flex-col overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+              className="flex flex-col overflow-hidden transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group"
             >
               <div 
-                className="aspect-square w-full relative cursor-pointer"
+                className="aspect-square w-full relative cursor-pointer bg-secondary/30 rounded-t-lg"
                 onClick={() => setSelectedProduct(product)}
               >
                 <Image
                   src={product.image}
                   alt={product.name}
                   fill
-                  className="object-contain p-4"
+                  className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
                   data-ai-hint={product.hint}
                 />
               </div>
-              <div className="flex flex-col flex-grow p-4 pt-0">
+              <div className="flex flex-col flex-grow p-3">
                  <div className="flex-grow">
                     <p 
-                        className="font-medium text-foreground cursor-pointer hover:underline"
+                        className="font-medium text-foreground cursor-pointer hover:underline text-sm"
                         onClick={() => setSelectedProduct(product)}
                     >
                         <span className="font-semibold">Name:</span> {product.name}
                     </p>
                     {product.price && (
-                        <p className="text-sm mt-1"><span className="font-semibold">Price:</span> {product.price}</p>
+                        <p className="text-xs mt-1"><span className="font-semibold">Price:</span> {product.price}</p>
                     )}
                     {product.description && (
-                        <p className="text-sm text-muted-foreground mt-2 line-clamp-1">
+                        <p className="text-xs text-muted-foreground mt-2 line-clamp-1">
                             {product.description}
                         </p>
                     )}
                  </div>
               </div>
-              <CardFooter className="p-4 pt-0 mt-auto">
-                  <Button size="sm" className="w-full" onClick={() => setSelectedProduct(product)}>
+              <CardFooter className="p-3 pt-0 mt-auto">
+                  <Button size="sm" className="w-full h-8 text-xs" onClick={() => setSelectedProduct(product)}>
                       View Details
                   </Button>
               </CardFooter>
@@ -99,12 +99,12 @@ export function ProductGrid({ products }: ProductGridProps) {
                <DialogTitle className="font-headline text-3xl mb-4">{selectedProduct.name}</DialogTitle>
               <DialogDescriptionPrimitive>
                 <div className="grid md:grid-cols-2 gap-8 items-start">
-                  <div className="aspect-square relative">
+                  <div className="aspect-square relative bg-secondary/30 rounded-lg">
                     <Image
                       src={selectedProduct.image}
                       alt={selectedProduct.name}
                       fill
-                      className="object-contain rounded-lg"
+                      className="object-contain rounded-lg p-4"
                       data-ai-hint={selectedProduct.hint}
                     />
                   </div>
