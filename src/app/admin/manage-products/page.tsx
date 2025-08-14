@@ -1,4 +1,7 @@
 
+"use client";
+
+import { useState, useEffect } from "react";
 import {
   PageHeader,
   PageHeaderDescription,
@@ -22,13 +25,13 @@ import {
   getDocs,
   orderBy,
   query,
-  deleteDoc,
-  doc,
+  onSnapshot,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Image from "next/image";
 import { AddProductForm } from "./add-product-form";
 import { DeleteProductButton } from "./delete-product-button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export interface Product {
   id: string;
@@ -44,52 +47,55 @@ export interface ProductCategory {
   products: Product[];
 }
 
-export const dynamic = 'force-dynamic';
+export default function ManageProductsPage() {
+  const [categories, setCategories] = useState<ProductCategory[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export const metadata = {
-  title: "Manage Products",
-  description: "Add, view, and remove product listings.",
-};
+  useEffect(() => {
+    const fetchAndListen = async () => {
+      setLoading(true);
+      try {
+        const categoriesCollection = collection(db, "productCategories");
+        const q = query(categoriesCollection, orderBy("name"));
 
-async function getProductData(): Promise<ProductCategory[]> {
-  try {
-    const categoriesCollection = collection(db, "productCategories");
-    const q = query(categoriesCollection, orderBy("name"));
-    const categoriesSnapshot = await getDocs(q);
+        const unsubscribe = onSnapshot(q, async (categoriesSnapshot) => {
+          const fetchedCategories = await Promise.all(
+            categoriesSnapshot.docs.map(async (categoryDoc) => {
+              const categoryData = categoryDoc.data();
+              const productsCollection = collection(categoryDoc.ref, "products");
+              const productsSnapshot = await getDocs(productsCollection);
 
-    const categories = await Promise.all(
-      categoriesSnapshot.docs.map(async (categoryDoc) => {
-        const categoryData = categoryDoc.data();
-        const productsCollection = collection(categoryDoc.ref, "products");
-        const productsSnapshot = await getDocs(productsCollection);
+              const products = productsSnapshot.docs.map((prodDoc) => {
+                const productData = prodDoc.data();
+                return {
+                  id: prodDoc.id,
+                  name: productData.name,
+                  image: productData.image,
+                  hint: productData.hint,
+                };
+              });
 
-        const products = productsSnapshot.docs.map((prodDoc) => {
-          const productData = prodDoc.data();
-          return {
-            id: prodDoc.id,
-            name: productData.name,
-            image: productData.image,
-            hint: productData.hint,
-          };
+              return {
+                id: categoryDoc.id,
+                name: categoryData.name,
+                description: categoryData.description,
+                products: products,
+              };
+            })
+          );
+          setCategories(fetchedCategories);
+          setLoading(false);
         });
 
-        return {
-          id: categoryDoc.id,
-          name: categoryData.name,
-          description: categoryData.description,
-          products: products,
-        };
-      })
-    );
-    return categories;
-  } catch (error) {
-    console.error("Error fetching product data from Firestore:", error);
-    return [];
-  }
-}
+        return () => unsubscribe();
+      } catch (error) {
+        console.error("Error fetching product data from Firestore:", error);
+        setLoading(false);
+      }
+    };
 
-export default async function ManageProductsPage() {
-  const categories = await getProductData();
+    fetchAndListen();
+  }, []);
 
   return (
     <div>
@@ -108,8 +114,14 @@ export default async function ManageProductsPage() {
                 <CardDescription>View and manage products currently listed on your products page.</CardDescription>
             </CardHeader>
             <CardContent>
-                {categories.length > 0 ? (
-                    <Accordion type="multiple" className="w-full">
+                {loading ? (
+                    <div className="space-y-4">
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                    </div>
+                ) : categories.length > 0 ? (
+                    <Accordion type="multiple" className="w-full" defaultValue={categories.map(c => c.id)}>
                         {categories.map(category => (
                             <AccordionItem key={category.id} value={category.id}>
                                 <AccordionTrigger className="text-lg font-semibold">{category.name} ({category.products.length})</AccordionTrigger>
@@ -145,7 +157,7 @@ export default async function ManageProductsPage() {
                         ))}
                     </Accordion>
                 ) : (
-                    <p className="text-muted-foreground text-center py-8">No product categories found.</p>
+                    <p className="text-muted-foreground text-center py-8">No product categories found. Add one to get started.</p>
                 )}
             </CardContent>
            </Card>
@@ -159,7 +171,15 @@ export default async function ManageProductsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <AddProductForm categories={categories} />
+              {loading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              ) : (
+                <AddProductForm categories={categories} />
+              )}
             </CardContent>
           </Card>
         </div>
