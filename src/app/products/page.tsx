@@ -28,6 +28,7 @@ async function getProductData(): Promise<ProductCategory[]> {
                 image: productData.image,
                 hint: productData.hint,
                 description: productData.description || '',
+                price: productData.price || 'On Enquiry',
              }
         });
 

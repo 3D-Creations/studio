@@ -22,6 +22,7 @@ export interface Product {
   image: string;
   hint: string;
   description?: string;
+  price?: string;
 }
 
 export interface ProductCategory {

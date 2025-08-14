@@ -38,6 +38,7 @@ const formSchema = z.object({
   name: z.string().min(3, "Product name must be at least 3 characters."),
   hint: z.string().min(2, "Hint must be at least 2 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
+  price: z.string().min(1, "Price is required."),
   categoryId: z.string({
     required_error: "Please select a product category.",
   }),
@@ -66,7 +67,8 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
     defaultValues: {
       name: "",
       hint: "",
-      description: ""
+      description: "",
+      price: "On Enquiry",
     },
   });
 
@@ -112,6 +114,7 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
     formData.append("hint", values.hint);
     formData.append("description", values.description);
     formData.append("categoryId", values.categoryId);
+    formData.append("price", values.price);
     formData.append("image", values.image);
 
     try {
@@ -188,40 +191,55 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
             )}
           />
         </div>
-
-        <FormField
-          control={form.control}
-          name="categoryId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={handleCategoryChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                  <div className="my-1 border-t"></div>
-                   <div 
-                      className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                      onSelect={(e) => e.preventDefault()} // Prevent closing
-                      onClick={() => handleCategoryChange('add-new-category')}
-                    >
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Create New Category
-                    </div>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        
+        <div className="grid md:grid-cols-2 gap-6">
+            <FormField
+            control={form.control}
+            name="categoryId"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Category</FormLabel>
+                <Select onValueChange={handleCategoryChange} value={field.value}>
+                    <FormControl>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                    {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                        </SelectItem>
+                    ))}
+                    <div className="my-1 border-t"></div>
+                    <div 
+                        className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                        onSelect={(e) => e.preventDefault()} // Prevent closing
+                        onClick={() => handleCategoryChange('add-new-category')}
+                        >
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Create New Category
+                        </div>
+                    </SelectContent>
+                </Select>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+             <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Price</FormLabel>
+                    <FormControl>
+                    <Input placeholder="e.g., 500 or On Enquiry" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+                )}
+            />
+        </div>
         
         <FormField
           control={form.control}

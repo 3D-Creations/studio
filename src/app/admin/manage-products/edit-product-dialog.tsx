@@ -40,6 +40,7 @@ const formSchema = z.object({
   name: z.string().min(3, "Product name must be at least 3 characters."),
   hint: z.string().min(2, "Hint must be at least 2 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
+  price: z.string().min(1, "Price is required."),
   image: z
     .any()
     .optional()
@@ -68,6 +69,7 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
       name: product.name || "",
       hint: product.hint || "",
       description: product.description || "",
+      price: product.price || "On Enquiry",
       image: undefined,
     },
   });
@@ -112,6 +114,7 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
     formData.append("name", values.name);
     formData.append("hint", values.hint);
     formData.append("description", values.description);
+    formData.append("price", values.price);
     formData.append("existingImageUrl", product.image);
     if (values.image) {
       formData.append("image", values.image);
@@ -187,6 +190,19 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
                     )}
                 />
                 </div>
+                 <FormField
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Price</FormLabel>
+                        <FormControl>
+                        <Input placeholder="e.g., 500 or On Enquiry" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
                 <FormField
                 control={form.control}
                 name="description"

@@ -41,6 +41,7 @@ export interface Product {
   image: string;
   hint: string;
   description?: string;
+  price?: string;
 }
 
 export interface ProductCategory {
@@ -70,6 +71,7 @@ async function getProductData(): Promise<ProductCategory[]> {
                 image: productData.image,
                 hint: productData.hint,
                 description: productData.description,
+                price: productData.price,
             };
             });
 

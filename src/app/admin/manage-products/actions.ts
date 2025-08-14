@@ -26,9 +26,10 @@ export async function addProduct(formData: FormData) {
   const hint = formData.get("hint") as string;
   const description = formData.get("description") as string;
   const categoryId = formData.get("categoryId") as string;
+  const price = formData.get("price") as string;
   const image = formData.get("image") as File;
 
-  if (!name || !hint || !description || !categoryId || !image) {
+  if (!name || !hint || !description || !categoryId || !image || !price) {
     throw new Error("Missing required form fields.");
   }
   
@@ -43,6 +44,7 @@ export async function addProduct(formData: FormData) {
     name: name,
     hint: hint,
     description: description,
+    price: price,
     image: imageUrl,
   });
 
@@ -54,10 +56,11 @@ export async function updateProduct(categoryId: string, productId: string, formD
   const name = formData.get("name") as string;
   const hint = formData.get("hint") as string;
   const description = formData.get("description") as string;
+  const price = formData.get("price") as string;
   const image = formData.get("image") as File | null;
   const existingImageUrl = formData.get("existingImageUrl") as string;
 
-  if (!name || !hint || !description || !categoryId || !productId) {
+  if (!name || !hint || !description || !categoryId || !productId || !price) {
     throw new Error("Missing required form fields.");
   }
 
@@ -90,6 +93,7 @@ export async function updateProduct(categoryId: string, productId: string, formD
     name,
     hint,
     description,
+    price,
     image: imageUrl,
   });
 
