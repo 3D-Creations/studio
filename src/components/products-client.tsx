@@ -17,9 +17,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export interface Product {
+  id: string;
   name: string;
   image: string;
   hint: string;
+  description?: string;
 }
 
 export interface ProductCategory {

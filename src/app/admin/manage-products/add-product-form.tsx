@@ -26,6 +26,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { addProduct } from "./actions";
 import { type ProductCategory } from "./page";
+import { Textarea } from "@/components/ui/textarea";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -33,6 +34,7 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 const formSchema = z.object({
   name: z.string().min(3, "Product name must be at least 3 characters."),
   hint: z.string().min(2, "Hint must be at least 2 characters."),
+  description: z.string().min(10, "Description must be at least 10 characters."),
   categoryId: z.string({
     required_error: "Please select a product category.",
   }),
@@ -58,6 +60,7 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
     defaultValues: {
       name: "",
       hint: "",
+      description: ""
     },
   });
 
@@ -67,6 +70,7 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("hint", values.hint);
+    formData.append("description", values.description);
     formData.append("categoryId", values.categoryId);
     formData.append("image", values.image);
 
@@ -145,6 +149,24 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
                   ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Product Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Describe the product in detail..."
+                  className="min-h-[100px]"
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

@@ -9,10 +9,11 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 export async function addProduct(formData: FormData) {
   const name = formData.get("name") as string;
   const hint = formData.get("hint") as string;
+  const description = formData.get("description") as string;
   const categoryId = formData.get("categoryId") as string;
   const image = formData.get("image") as File;
 
-  if (!name || !hint || !categoryId || !image) {
+  if (!name || !hint || !description || !categoryId || !image) {
     throw new Error("Missing required form fields.");
   }
   
@@ -29,6 +30,7 @@ export async function addProduct(formData: FormData) {
   await addDoc(productsCollectionRef, {
     name: name,
     hint: hint,
+    description: description,
     image: imageUrl,
   });
 

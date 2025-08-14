@@ -11,8 +11,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 async function getProductData(): Promise<ProductCategory[]> {
   try {
     const categoriesCollection = collection(db, 'productCategories');
-    // Note: A composite index might be required in Firestore for this orderBy clause.
-    // If you see errors, you may need to create it in the Firebase console.
     const q = query(categoriesCollection, orderBy('name'));
     const categoriesSnapshot = await getDocs(q);
 
@@ -25,9 +23,11 @@ async function getProductData(): Promise<ProductCategory[]> {
         const products = productsSnapshot.docs.map(prodDoc => {
              const productData = prodDoc.data();
              return {
+                id: prodDoc.id,
                 name: productData.name,
                 image: productData.image,
                 hint: productData.hint,
+                description: productData.description || '',
              }
         });
 
@@ -45,7 +45,6 @@ async function getProductData(): Promise<ProductCategory[]> {
     if (error instanceof Error && 'code' in error && (error as any).code === 'permission-denied') {
         console.error("Firestore permission denied. Please check your security rules and indexes in the Firebase console.");
     }
-    // Return empty array on error to prevent build failure. Page will show a message.
     return [];
   }
 }

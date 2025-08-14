@@ -36,6 +36,7 @@ export interface Product {
   name: string;
   image: string;
   hint: string;
+  description?: string;
 }
 
 export interface ProductCategory {
@@ -48,7 +49,6 @@ export interface ProductCategory {
 async function getProductData(): Promise<ProductCategory[]> {
     try {
         const categoriesCollection = collection(db, "productCategories");
-        // Removed the orderBy clause which requires a composite index.
         const q = query(categoriesCollection);
         const categoriesSnapshot = await getDocs(q);
 
@@ -65,6 +65,7 @@ async function getProductData(): Promise<ProductCategory[]> {
                 name: productData.name,
                 image: productData.image,
                 hint: productData.hint,
+                description: productData.description,
             };
             });
 
@@ -76,11 +77,9 @@ async function getProductData(): Promise<ProductCategory[]> {
             };
         })
         );
-        // Sorting can be done client-side after fetching
         return categories.sort((a, b) => a.name.localeCompare(b.name));
     } catch (error) {
         console.error("Error fetching product data from Firestore:", error);
-        // This will be caught by the calling function's try/catch block
         throw error;
     }
 }
@@ -89,14 +88,14 @@ async function getProductData(): Promise<ProductCategory[]> {
 export default function ManageProductsPage() {
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [key, setKey] = useState(0); // Add a key to force re-render
+  const [key, setKey] = useState(0); 
 
   const fetchData = async () => {
       setLoading(true);
       try {
         const data = await getProductData();
         setCategories(data);
-        setKey(prevKey => prevKey + 1); // Update key to force AddProductForm to re-render with categories
+        setKey(prevKey => prevKey + 1); 
       } catch (error) {
         console.error("Failed to load product categories.", error);
       } finally {
@@ -109,7 +108,7 @@ export default function ManageProductsPage() {
   }, []);
 
   const handleProductAdded = () => {
-    fetchData(); // Refetch data when a product is added
+    fetchData(); 
   }
 
   return (

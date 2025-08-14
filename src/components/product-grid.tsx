@@ -8,10 +8,17 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { type Product } from '@/components/products-client';
 import { cn } from '@/lib/utils';
@@ -31,7 +38,7 @@ export function ProductGrid({ products }: ProductGridProps) {
     setTimeout(() => {
       setVisibleProducts((prev) => prev + PRODUCTS_PER_PAGE);
       setIsLoading(false);
-    }, 500); // Simulate network delay
+    }, 500); 
   };
 
   const hasMoreProducts = visibleProducts < products.length;
@@ -40,31 +47,54 @@ export function ProductGrid({ products }: ProductGridProps) {
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {products.slice(0, visibleProducts).map((product, index) => (
-          <Card key={index} className="flex flex-col overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
-            <CardContent className="p-0">
-              <Image
-                src={product.image}
-                alt={product.name}
-                width={400}
-                height={300}
-                className="w-full h-48 object-cover"
-                data-ai-hint={product.hint}
-              />
-            </CardContent>
-            <div className="flex flex-col flex-grow">
-              <CardHeader>
-                <CardTitle className="font-headline text-xl">{product.name}</CardTitle>
-              </CardHeader>
-              <CardFooter className="mt-auto">
-                <Link href="/contact" className={cn(
-                  buttonVariants({ variant: 'outline', size: 'sm' }),
-                  "w-full"
-                )}>
-                  Inquire Now <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </CardFooter>
-            </div>
-          </Card>
+          <Dialog key={product.id || index}>
+            <DialogTrigger asChild>
+              <Card className="flex flex-col overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+                <CardContent className="p-0">
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    width={400}
+                    height={300}
+                    className="w-full h-48 object-cover"
+                    data-ai-hint={product.hint}
+                  />
+                </CardContent>
+                <div className="flex flex-col flex-grow p-4">
+                  <CardTitle className="font-headline text-lg">{product.name}</CardTitle>
+                </div>
+              </Card>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle className="font-headline text-3xl mb-2">{product.name}</DialogTitle>
+                <DialogDescription>
+                  <div className="grid md:grid-cols-2 gap-8 items-start">
+                    <div className="aspect-square relative">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        className="object-cover rounded-lg"
+                        data-ai-hint={product.hint}
+                      />
+                    </div>
+                    <div className="space-y-4">
+                       <p className="text-base text-muted-foreground whitespace-pre-wrap">
+                          {product.description || "No description available."}
+                        </p>
+                        <Link href="/contact" className={cn(
+                          buttonVariants({ size: 'lg' }),
+                          "w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity"
+                        )}>
+                          Inquire Now <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                    </div>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         ))}
       </div>
 
