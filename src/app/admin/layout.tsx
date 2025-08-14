@@ -17,7 +17,7 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar"
 import { Logo } from "@/components/logo"
-import { LayoutDashboard, MessageSquare, Inbox, Loader2, LogOut } from "lucide-react"
+import { LayoutDashboard, MessageSquare, Inbox, Loader2, LogOut, Package } from "lucide-react"
 import { useAuth } from '@/hooks/use-auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -66,6 +66,14 @@ export default function AdminLayout({
                   <SidebarMenuButton tooltip="Inquiries">
                     <Inbox />
                     <span>Inquiries</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+               <SidebarMenuItem>
+                <Link href="/admin/manage-products" passHref>
+                  <SidebarMenuButton tooltip="Manage Products">
+                    <Package />
+                    <span>Manage Products</span>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
