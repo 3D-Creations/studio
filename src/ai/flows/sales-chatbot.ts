@@ -53,5 +53,16 @@ export async function salesChatbot(
   input: SalesChatbotInput
 ): Promise<SalesChatbotOutput> {
     const llmResponse = await prompt(input);
-    return llmResponse.output!;
+    const output = llmResponse.output();
+    if (!output) {
+      if (llmResponse.hasToolRequests()) {
+        const toolResponse = await llmResponse.performTools();
+        const finalResponse = await prompt(input, {
+          history: [...llmResponse.history(), ...toolResponse],
+        });
+        return finalResponse.text();
+      }
+      throw new Error('No output from prompt');
+    }
+    return output;
 }
