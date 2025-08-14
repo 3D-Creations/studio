@@ -3,7 +3,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db, storage } from "@/lib/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, deleteDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export async function addProduct(formData: FormData) {

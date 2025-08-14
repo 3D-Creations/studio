@@ -48,9 +48,10 @@ const formSchema = z.object({
 
 interface AddProductFormProps {
   categories: ProductCategory[];
+  onProductAdded: () => void;
 }
 
-export function AddProductForm({ categories }: AddProductFormProps) {
+export function AddProductForm({ categories, onProductAdded }: AddProductFormProps) {
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,6 +82,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
       if (fileInput) {
         fileInput.value = '';
       }
+      onProductAdded(); // Trigger the callback
     } catch (error) {
       console.error(error);
       toast({

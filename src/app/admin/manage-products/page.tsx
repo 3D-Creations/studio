@@ -23,7 +23,6 @@ import {
 import {
   collection,
   getDocs,
-  orderBy,
   query,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -49,7 +48,8 @@ export interface ProductCategory {
 async function getProductData(): Promise<ProductCategory[]> {
     try {
         const categoriesCollection = collection(db, "productCategories");
-        const q = query(categoriesCollection, orderBy("name"));
+        // Removed the orderBy clause which requires a composite index.
+        const q = query(categoriesCollection);
         const categoriesSnapshot = await getDocs(q);
 
         const categories = await Promise.all(
@@ -76,7 +76,8 @@ async function getProductData(): Promise<ProductCategory[]> {
             };
         })
         );
-        return categories;
+        // Sorting can be done client-side after fetching
+        return categories.sort((a, b) => a.name.localeCompare(b.name));
     } catch (error) {
         console.error("Error fetching product data from Firestore:", error);
         // This will be caught by the calling function's try/catch block
@@ -88,13 +89,14 @@ async function getProductData(): Promise<ProductCategory[]> {
 export default function ManageProductsPage() {
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [key, setKey] = useState(0); // Add a key to force re-render
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = async () => {
       setLoading(true);
       try {
         const data = await getProductData();
         setCategories(data);
+        setKey(prevKey => prevKey + 1); // Update key to force AddProductForm to re-render with categories
       } catch (error) {
         console.error("Failed to load product categories.", error);
       } finally {
@@ -102,8 +104,13 @@ export default function ManageProductsPage() {
       }
     };
 
+  useEffect(() => {
     fetchData();
   }, []);
+
+  const handleProductAdded = () => {
+    fetchData(); // Refetch data when a product is added
+  }
 
   return (
     <div>
@@ -151,7 +158,7 @@ export default function ManageProductsPage() {
                                                     </CardContent>
                                                 </Card>
                                                 <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
-                                                    <DeleteProductButton categoryId={category.id} productId={product.id} />
+                                                    <DeleteProductButton categoryId={category.id} productId={product.id} onProductDeleted={handleProductAdded} />
                                                 </div>
                                                 <p className="text-sm font-medium mt-2 text-center truncate">{product.name}</p>
                                             </div>
@@ -186,7 +193,7 @@ export default function ManageProductsPage() {
                   <Skeleton className="h-10 w-full" />
                 </div>
               ) : (
-                <AddProductForm categories={categories} />
+                <AddProductForm key={key} categories={categories} onProductAdded={handleProductAdded} />
               )}
             </CardContent>
           </Card>

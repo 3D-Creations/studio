@@ -20,9 +20,10 @@ import { deleteProduct } from "./actions";
 interface DeleteProductButtonProps {
   categoryId: string;
   productId: string;
+  onProductDeleted: () => void;
 }
 
-export function DeleteProductButton({ categoryId, productId }: DeleteProductButtonProps) {
+export function DeleteProductButton({ categoryId, productId, onProductDeleted }: DeleteProductButtonProps) {
   const { toast } = useToast();
 
   const handleDelete = async () => {
@@ -32,6 +33,7 @@ export function DeleteProductButton({ categoryId, productId }: DeleteProductButt
         title: "Product Deleted",
         description: "The product has been successfully removed.",
       });
+      onProductDeleted();
     } catch (error) {
       console.error(error);
       toast({
