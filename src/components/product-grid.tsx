@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from 'react';
@@ -12,7 +13,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ArrowRight, Loader2 } from 'lucide-react';
-import { type Product } from '@/lib/products';
+import { type Product } from '@/components/products-client';
 import { cn } from '@/lib/utils';
 
 const PRODUCTS_PER_PAGE = 8;
@@ -38,8 +39,8 @@ export function ProductGrid({ products }: ProductGridProps) {
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {products.slice(0, visibleProducts).map((product) => (
-          <Card key={product.name} className="flex flex-col overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+        {products.slice(0, visibleProducts).map((product, index) => (
+          <Card key={index} className="flex flex-col overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
             <CardContent className="p-0">
               <Image
                 src={product.image}
