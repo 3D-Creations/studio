@@ -11,7 +11,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
-import { collection, query, where, getDocs, limit } from 'firebase/firestore';
+import { collection, query, where, getDocs, limit, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 
@@ -33,14 +33,27 @@ const companyResearchTool = ai.defineTool(
 const getLeadInfoTool = ai.defineTool(
   {
     name: 'getLeadInfo',
-    description: "Retrieves information about a specific lead from the company's database of inquiries. Use this when asked a question about a lead's name, their company, or their product interest.",
+    description: "Retrieves information about leads from the company's database. If a name or company is provided, it searches for that specific lead. If no name is provided, it lists the 5 most recent leads. Use this for specific questions like 'Tell me about Acme Corp' or general questions like 'List down the recent leads'.",
     inputSchema: z.object({
-      name: z.string().describe("The name of the lead or their company to look up in the database."),
+      name: z.string().optional().describe("The name of the lead or their company to look up. If omitted, the 5 most recent leads will be returned."),
     }),
     outputSchema: z.string(),
   },
   async (input) => {
     const inquiriesRef = collection(db, 'inquiries');
+    
+    if (!input.name) {
+        // If no name is provided, get the 5 most recent inquiries
+        const recentLeadsQuery = query(inquiriesRef, orderBy('createdAt', 'desc'), limit(5));
+        const snapshot = await getDocs(recentLeadsQuery);
+         if (snapshot.empty) {
+            return "There are no leads in the database.";
+        }
+        const leadData = snapshot.docs.map(doc => doc.data());
+        return JSON.stringify(leadData);
+    }
+
+    // If a name is provided, search for it
     const nameQuery = query(inquiriesRef, where('name', '==', input.name), limit(5));
     const companyQuery = query(inquiriesRef, where('company', '==', input.name), limit(5));
 
@@ -124,7 +137,7 @@ const salesChatbotFlow = ai.defineFlow({
 
 ## Your Tools:
 You have three primary tools to answer questions:
-1.  **getLeadInfo**: Use this FIRST for any questions about a specific person or company that might be an existing lead in our system. Examples: "Tell me about Acme Corp's inquiry", "What is Priya Singh interested in?".
+1.  **getLeadInfo**: Use this FIRST for any questions about leads. If a specific person or company name is provided, it will find them. If not, it will list the 5 most recent leads. Examples: "Tell me about Acme Corp's inquiry", "What is Priya Singh interested in?", "List the latest leads".
 2.  **getLeadCountTool**: Use this when asked for the total number of leads or inquiries. Example: "How many leads do we have?".
 3.  **companyResearch**: Use this for general web searches about companies that are likely NOT in our lead database. Example: "Research a company called 'Solaris Inc.' that was mentioned in the news".
 
