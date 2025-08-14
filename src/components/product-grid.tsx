@@ -85,8 +85,12 @@ export function ProductGrid({ products }: ProductGridProps) {
                  </div>
               </div>
               <CardFooter className="p-3 pt-0 mt-auto">
-                  <Button size="sm" className="w-full h-8 text-xs" onClick={() => setSelectedProduct(product)}>
-                      View Details
+                  <Button 
+                    size="sm" 
+                    className="w-full h-8 text-xs bg-gradient-to-r from-primary/80 to-accent/80 text-primary-foreground hover:opacity-90 transition-opacity" 
+                    onClick={() => setSelectedProduct(product)}
+                  >
+                      Inquire Now
                   </Button>
               </CardFooter>
             </Card>
@@ -151,4 +155,5 @@ export function ProductGrid({ products }: ProductGridProps) {
     </div>
   );
 }
+
 
