@@ -28,8 +28,12 @@ import {
 import { db } from "@/lib/firebase";
 import Image from "next/image";
 import { AddProductForm } from "./add-product-form";
-import { DeleteProductButton } from "./delete-product-button";
+import { EditProductDialog } from "./edit-product-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
+import { AddCategoryDialog } from "./add-category-dialog";
+
 
 export interface Product {
   id: string;
@@ -73,7 +77,7 @@ async function getProductData(): Promise<ProductCategory[]> {
             id: categoryDoc.id,
             name: categoryData.name,
             description: categoryData.description,
-            products: products,
+            products: products.sort((a,b) => a.name.localeCompare(b.name)),
             };
         })
         );
@@ -89,6 +93,8 @@ export default function ManageProductsPage() {
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [key, setKey] = useState(0); 
+  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<{product: Product, categoryId: string} | null>(null);
 
   const fetchData = async () => {
       setLoading(true);
@@ -107,7 +113,7 @@ export default function ManageProductsPage() {
     fetchData();
   }, []);
 
-  const handleProductAdded = () => {
+  const handleDataChange = () => {
     fetchData(); 
   }
 
@@ -116,16 +122,24 @@ export default function ManageProductsPage() {
       <PageHeader>
         <PageHeaderHeading>Manage Products</PageHeaderHeading>
         <PageHeaderDescription>
-          Add new products and manage existing ones.
+          Add, edit, and manage products and categories.
         </PageHeaderDescription>
       </PageHeader>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-8">
            <Card>
-            <CardHeader>
-                <CardTitle>Existing Products</CardTitle>
-                <CardDescription>View and manage products currently listed on your products page.</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle>Existing Products</CardTitle>
+                    <CardDescription>View and manage products currently listed on your products page.</CardDescription>
+                </div>
+                 <AddCategoryDialog onCategoryAdded={handleDataChange}>
+                    <Button>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add Category
+                    </Button>
+                </AddCategoryDialog>
             </CardHeader>
             <CardContent>
                 {loading ? (
@@ -143,8 +157,8 @@ export default function ManageProductsPage() {
                                     {category.products.length > 0 ? (
                                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 pt-4">
                                         {category.products.map(product => (
-                                            <div key={product.id} className="relative group">
-                                                <Card>
+                                            <div key={product.id} className="relative group cursor-pointer" onClick={() => setEditingProduct({product, categoryId: category.id})}>
+                                                <Card className="overflow-hidden transition-all duration-300 group-hover:shadow-xl group-hover:scale-105">
                                                     <CardContent className="p-0">
                                                         {product.image ? (
                                                           <Image
@@ -163,7 +177,7 @@ export default function ManageProductsPage() {
                                                     </CardContent>
                                                 </Card>
                                                 <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
-                                                    <DeleteProductButton categoryId={category.id} productId={product.id} onProductDeleted={handleProductAdded} />
+                                                    <p className="text-white font-semibold">Edit</p>
                                                 </div>
                                                 <p className="text-sm font-medium mt-2 text-center truncate">{product.name}</p>
                                             </div>
@@ -177,7 +191,7 @@ export default function ManageProductsPage() {
                         ))}
                     </Accordion>
                 ) : (
-                    <p className="text-muted-foreground text-center py-8">No product categories found. This could be due to a permissions issue or because no categories have been added to the database.</p>
+                    <p className="text-muted-foreground text-center py-8">No product categories found. Create one to get started.</p>
                 )}
             </CardContent>
            </Card>
@@ -198,12 +212,21 @@ export default function ManageProductsPage() {
                   <Skeleton className="h-10 w-full" />
                 </div>
               ) : (
-                <AddProductForm key={key} categories={categories} onProductAdded={handleProductAdded} />
+                <AddProductForm key={key} categories={categories} onProductAdded={handleDataChange} />
               )}
             </CardContent>
           </Card>
         </div>
       </div>
+       {editingProduct && (
+        <EditProductDialog
+          isOpen={!!editingProduct}
+          onClose={() => setEditingProduct(null)}
+          product={editingProduct.product}
+          categoryId={editingProduct.categoryId}
+          onProductUpdated={handleDataChange}
+        />
+      )}
     </div>
   );
 }

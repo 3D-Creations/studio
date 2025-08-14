@@ -23,12 +23,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, PlusCircle } from "lucide-react";
 import { addProduct } from "./actions";
 import { type ProductCategory } from "./page";
 import { Textarea } from "@/components/ui/textarea";
 import { generateProductDescription } from "@/ai/flows/generate-product-description";
-import React from "react";
+import React, { useState } from "react";
+import { AddCategoryDialog } from "./add-category-dialog";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
@@ -58,6 +59,8 @@ interface AddProductFormProps {
 export function AddProductForm({ categories, onProductAdded }: AddProductFormProps) {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = React.useState(false);
+  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -118,12 +121,11 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
         description: `${values.name} has been successfully added.`,
       });
       form.reset();
-      // This is a bit of a hack to reset the file input visually
       const fileInput = document.getElementById('image-input') as HTMLInputElement;
       if (fileInput) {
         fileInput.value = '';
       }
-      onProductAdded(); // Trigger the callback
+      onProductAdded(); 
     } catch (error) {
       console.error(error);
       toast({
@@ -134,7 +136,28 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
     }
   }
 
+  const handleCategoryChange = (value: string) => {
+    if (value === 'add-new-category') {
+      setIsAddCategoryOpen(true);
+    } else {
+        form.setValue("categoryId", value);
+    }
+  }
+  
+  const handleCategoryAdded = (newCategoryId: string) => {
+    onProductAdded(); // This re-fetches all data
+    setTimeout(() => { // Give it a moment to re-render with new categories
+        form.setValue("categoryId", newCategoryId, { shouldValidate: true });
+    }, 100);
+  }
+
   return (
+    <>
+    <AddCategoryDialog 
+        isOpen={isAddCategoryOpen} 
+        onClose={() => setIsAddCategoryOpen(false)}
+        onCategoryAdded={handleCategoryAdded}
+    />
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid md:grid-cols-2 gap-6">
@@ -172,7 +195,7 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={handleCategoryChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
@@ -184,6 +207,15 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
                       {category.name}
                     </SelectItem>
                   ))}
+                  <div className="my-1 border-t"></div>
+                   <div 
+                      className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                      onSelect={(e) => e.preventDefault()} // Prevent closing
+                      onClick={() => handleCategoryChange('add-new-category')}
+                    >
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Create New Category
+                    </div>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -250,5 +282,6 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
         </Button>
       </form>
     </Form>
+    </>
   );
 }

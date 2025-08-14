@@ -14,21 +14,25 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { deleteProduct } from "./actions";
+import { useState } from "react";
 
 interface DeleteProductButtonProps {
   categoryId: string;
   productId: string;
+  productImage?: string;
   onProductDeleted: () => void;
 }
 
-export function DeleteProductButton({ categoryId, productId, onProductDeleted }: DeleteProductButtonProps) {
+export function DeleteProductButton({ categoryId, productId, productImage, onProductDeleted }: DeleteProductButtonProps) {
   const { toast } = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
+    setIsDeleting(true);
     try {
-      await deleteProduct(categoryId, productId);
+      await deleteProduct(categoryId, productId, productImage);
       toast({
         title: "Product Deleted",
         description: "The product has been successfully removed.",
@@ -41,15 +45,17 @@ export function DeleteProductButton({ categoryId, productId, onProductDeleted }:
         description: "Failed to delete product.",
         variant: "destructive",
       });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="icon">
-          <Trash2 className="h-4 w-4" />
-          <span className="sr-only">Delete Product</span>
+        <Button variant="destructive">
+          <Trash2 className="mr-2 h-4 w-4" />
+          Delete Product
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -57,12 +63,15 @@ export function DeleteProductButton({ categoryId, productId, onProductDeleted }:
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete the
-            product from the database.
+            product from the database and its image from storage.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
+             {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Continue
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
