@@ -23,10 +23,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { addProduct } from "./actions";
 import { type ProductCategory } from "./page";
 import { Textarea } from "@/components/ui/textarea";
+import { generateProductDescription } from "@/ai/flows/generate-product-description";
+import React from "react";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -55,6 +57,7 @@ interface AddProductFormProps {
 
 export function AddProductForm({ categories, onProductAdded }: AddProductFormProps) {
   const { toast } = useToast();
+  const [isGenerating, setIsGenerating] = React.useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -65,6 +68,40 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
   });
 
   const { isSubmitting } = form.formState;
+
+  const handleGenerateDescription = async () => {
+    const productName = form.getValues("name");
+    const categoryId = form.getValues("categoryId");
+    if (!productName || !categoryId) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter a product name and select a category first.",
+        variant: "destructive"
+      });
+      return;
+    }
+    const categoryName = categories.find(c => c.id === categoryId)?.name || "";
+
+    setIsGenerating(true);
+    try {
+      const result = await generateProductDescription({ productName, categoryName });
+      form.setValue("description", result.description, { shouldValidate: true });
+      toast({
+        title: "Description Generated!",
+        description: "The AI-powered description has been added."
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "Failed to generate AI description.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
@@ -159,10 +196,16 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Product Description</FormLabel>
+                <div className="flex justify-between items-center">
+                    <FormLabel>Product Description</FormLabel>
+                    <Button type="button" size="sm" variant="ghost" onClick={handleGenerateDescription} disabled={isGenerating}>
+                        {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                        Generate with AI
+                    </Button>
+                </div>
               <FormControl>
                 <Textarea
-                  placeholder="Describe the product in detail..."
+                  placeholder="Describe the product in detail, or let AI generate it for you..."
                   className="min-h-[100px]"
                   {...field}
                 />
@@ -195,7 +238,7 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
             )}
         />
 
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting || isGenerating}>
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
