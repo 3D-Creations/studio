@@ -25,7 +25,6 @@ import {
   getDocs,
   orderBy,
   query,
-  onSnapshot,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Image from "next/image";
@@ -47,54 +46,63 @@ export interface ProductCategory {
   products: Product[];
 }
 
+async function getProductData(): Promise<ProductCategory[]> {
+    try {
+        const categoriesCollection = collection(db, "productCategories");
+        const q = query(categoriesCollection, orderBy("name"));
+        const categoriesSnapshot = await getDocs(q);
+
+        const categories = await Promise.all(
+        categoriesSnapshot.docs.map(async (categoryDoc) => {
+            const categoryData = categoryDoc.data();
+            const productsCollection = collection(categoryDoc.ref, "products");
+            const productsSnapshot = await getDocs(productsCollection);
+
+            const products = productsSnapshot.docs.map((prodDoc) => {
+            const productData = prodDoc.data();
+            return {
+                id: prodDoc.id,
+                name: productData.name,
+                image: productData.image,
+                hint: productData.hint,
+            };
+            });
+
+            return {
+            id: categoryDoc.id,
+            name: categoryData.name,
+            description: categoryData.description,
+            products: products,
+            };
+        })
+        );
+        return categories;
+    } catch (error) {
+        console.error("Error fetching product data from Firestore:", error);
+        // This will be caught by the calling function's try/catch block
+        throw error;
+    }
+}
+
+
 export default function ManageProductsPage() {
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAndListen = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const categoriesCollection = collection(db, "productCategories");
-        const q = query(categoriesCollection, orderBy("name"));
-
-        const unsubscribe = onSnapshot(q, async (categoriesSnapshot) => {
-          const fetchedCategories = await Promise.all(
-            categoriesSnapshot.docs.map(async (categoryDoc) => {
-              const categoryData = categoryDoc.data();
-              const productsCollection = collection(categoryDoc.ref, "products");
-              const productsSnapshot = await getDocs(productsCollection);
-
-              const products = productsSnapshot.docs.map((prodDoc) => {
-                const productData = prodDoc.data();
-                return {
-                  id: prodDoc.id,
-                  name: productData.name,
-                  image: productData.image,
-                  hint: productData.hint,
-                };
-              });
-
-              return {
-                id: categoryDoc.id,
-                name: categoryData.name,
-                description: categoryData.description,
-                products: products,
-              };
-            })
-          );
-          setCategories(fetchedCategories);
-          setLoading(false);
-        });
-
-        return () => unsubscribe();
+        const data = await getProductData();
+        setCategories(data);
       } catch (error) {
-        console.error("Error fetching product data from Firestore:", error);
+        console.error("Failed to load product categories.", error);
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchAndListen();
+    fetchData();
   }, []);
 
   return (
@@ -157,7 +165,7 @@ export default function ManageProductsPage() {
                         ))}
                     </Accordion>
                 ) : (
-                    <p className="text-muted-foreground text-center py-8">No product categories found. Add one to get started.</p>
+                    <p className="text-muted-foreground text-center py-8">No product categories found. This could be due to a permissions issue or because no categories have been added to the database.</p>
                 )}
             </CardContent>
            </Card>
