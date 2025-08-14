@@ -147,14 +147,20 @@ export default function ManageProductsPage() {
                                             <div key={product.id} className="relative group">
                                                 <Card>
                                                     <CardContent className="p-0">
-                                                        <Image
-                                                            src={product.image}
-                                                            alt={product.name}
-                                                            width={200}
-                                                            height={200}
-                                                            className="w-full h-auto object-cover aspect-square rounded-t-lg"
-                                                            data-ai-hint={product.hint}
-                                                        />
+                                                        {product.image ? (
+                                                          <Image
+                                                              src={product.image}
+                                                              alt={product.name}
+                                                              width={200}
+                                                              height={200}
+                                                              className="w-full h-auto object-cover aspect-square rounded-t-lg"
+                                                              data-ai-hint={product.hint}
+                                                          />
+                                                        ) : (
+                                                          <div className="w-full h-auto object-cover aspect-square rounded-t-lg bg-muted flex items-center justify-center">
+                                                              <span className="text-xs text-muted-foreground">No Image</span>
+                                                          </div>
+                                                        )}
                                                     </CardContent>
                                                 </Card>
                                                 <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
