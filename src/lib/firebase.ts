@@ -15,14 +15,14 @@ const mainFirebaseConfig = {
 };
 
 // --- Secondary Firebase Project (for Storage) ---
-// IMPORTANT: Replace this with the actual config for your second Firebase project.
 const storageFirebaseConfig = {
-  projectId: "your-storage-project-id",
-  appId: "your-storage-app-id",
-  storageBucket: "your-storage-project-id.appspot.com",
-  apiKey: "your-storage-api-key",
-  authDomain: "your-storage-project-id.firebaseapp.com",
-  messagingSenderId: "your-storage-messaging-sender-id"
+  apiKey: "AIzaSyB1M9sHgY_W5JjPjQU2dgXH1l-T5i4dK0Q",
+  authDomain: "d-creations-cd15a.firebaseapp.com",
+  projectId: "d-creations-cd15a",
+  storageBucket: "d-creations-cd15a.firebasestorage.app",
+  messagingSenderId: "835398855771",
+  appId: "1:835398855771:web:7bc6e82ca9583525a1a37e",
+  measurementId: "G-P6QECJKZQ6"
 };
 
 
