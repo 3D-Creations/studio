@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -8,7 +9,7 @@ import {
 import { MessageSquare, Inbox, Sparkles, Target, Activity, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { getDailyMotivation } from '@/ai/flows/get-daily-motivation'
-import { collection, getDocs, query, where } from 'firebase/firestore'
+import { collection, getDocs, query } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 
 export const dynamic = 'force-dynamic'
@@ -20,21 +21,21 @@ export const metadata = {
 async function getInquiryStats() {
     try {
         const inquiriesCollection = collection(db, 'inquiries');
+        const inquirySnapshot = await getDocs(inquiriesCollection);
         
-        const totalSnapshot = await getDocs(inquiriesCollection);
-        const totalInquiries = totalSnapshot.size;
-
-        const newQuery = query(inquiriesCollection, where('status', '==', 'New'));
-        const newSnapshot = await getDocs(newQuery);
-        const newInquiries = newSnapshot.size;
-
-        const inProgressQuery = query(inquiriesCollection, where('status', '==', 'In Progress'));
-        const inProgressSnapshot = await getDocs(inProgressQuery);
-        const inProgressInquiries = inProgressSnapshot.size;
+        const inquiries = inquirySnapshot.docs.map(doc => doc.data());
+        
+        const totalInquiries = inquiries.length;
+        const newInquiries = inquiries.filter(inquiry => inquiry.status === 'New').length;
+        const inProgressInquiries = inquiries.filter(inquiry => inquiry.status === 'In Progress').length;
 
         return { totalInquiries, newInquiries, inProgressInquiries };
     } catch (error) {
         console.error("Error fetching inquiry stats:", error);
+        // This will now be caught by Next.js error handling
+        if (error instanceof Error && 'code' in error && (error as any).code === 'permission-denied') {
+             console.error("Firestore permission denied. Please check your security rules and indexes in the Firebase console.");
+        }
         return { totalInquiries: 0, newInquiries: 0, inProgressInquiries: 0 };
     }
 }
