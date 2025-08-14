@@ -1,61 +1,57 @@
 
-"use client";
-
-import { useState } from 'react';
-import { Search, Filter, X, Check, ChevronsUpDown } from 'lucide-react';
 import { SplinePlaceholder } from '@/components/spline-placeholder';
-import { productCategories, type ProductCategory, type Product } from '@/lib/products';
-import { ProductGrid } from '@/components/product-grid';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { ProductsClient, type ProductCategory } from '@/components/products-client';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
-export default function ProductsPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState(productCategories[0].id);
-  const [sortOption, setSortOption] = useState('default');
+export const metadata = {
+  title: 'Our Products',
+  description: 'Discover our comprehensive range of innovative products, meticulously crafted to meet your branding and promotional needs.',
+};
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  };
-  
-  const clearSearch = () => {
-    setSearchQuery('');
-  }
+async function getProductData(): Promise<ProductCategory[]> {
+  try {
+    const categoriesCollection = collection(db, 'productCategories');
+    const q = query(categoriesCollection, orderBy('name'));
+    const categoriesSnapshot = await getDocs(q);
 
-  const sortProducts = (products: Product[]) => {
-    switch (sortOption) {
-      case 'az':
-        return [...products].sort((a, b) => a.name.localeCompare(b.name));
-      case 'za':
-        return [...products].sort((a, b) => b.name.localeCompare(a.name));
-      default:
-        return products;
+    const categories = await Promise.all(
+      categoriesSnapshot.docs.map(async (categoryDoc) => {
+        const categoryData = categoryDoc.data();
+        const productsCollection = collection(categoryDoc.ref, 'products');
+        const productsSnapshot = await getDocs(productsCollection);
+        
+        const products = productsSnapshot.docs.map(prodDoc => {
+             const productData = prodDoc.data();
+             return {
+                name: productData.name,
+                image: productData.image,
+                hint: productData.hint,
+             }
+        });
+
+        return {
+          id: categoryDoc.id,
+          name: categoryData.name,
+          description: categoryData.description,
+          products: products,
+        };
+      })
+    );
+    return categories;
+  } catch (error) {
+    console.error("Error fetching product data from Firestore:", error);
+    if (error instanceof Error && 'code' in error && (error as any).code === 'permission-denied') {
+        console.error("Firestore permission denied. Please check your security rules and indexes in the Firebase console.");
     }
+    // Return empty array on error to prevent build failure. Page will show a message.
+    return [];
   }
+}
 
-  const filteredCategories = productCategories.map(category => ({
-    ...category,
-    products: sortProducts(category.products.filter(product =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )),
-  })).filter(category => category.products.length > 0);
 
-  const allFilteredProducts = sortProducts(
-    productCategories.flatMap(category => category.products)
-      .filter(product => product.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
-
-  const isSearching = searchQuery.length > 0;
+export default async function ProductsPage() {
+  const productCategories = await getProductData();
 
   return (
     <div className="relative overflow-hidden">
@@ -73,72 +69,13 @@ export default function ProductsPage() {
       </section>
 
       <div className="container pb-16 md:pb-24">
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-            <div className="relative flex-grow">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                  placeholder="Search all products..."
-                  className="pl-10 w-full"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-                {isSearching && (
-                  <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={clearSearch}>
-                    <X className="h-5 w-5 text-muted-foreground" />
-                  </Button>
-                )}
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex-shrink-0">
-                    <Filter className="mr-2 h-5 w-5" />
-                    Filters
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup value={sortOption} onValueChange={setSortOption}>
-                  <DropdownMenuRadioItem value="default">Default</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="az">A-Z</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="za">Z-A</DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-
-        {isSearching ? (
-           <div className="space-y-12">
-             {allFilteredProducts.length > 0 ? (
-                <div>
-                    <h2 className="text-3xl md:text-4xl font-bold font-headline mb-10 text-center md:text-left">Search Results</h2>
-                    <ProductGrid products={allFilteredProducts} />
-                </div>
-             ) : (
-                <div className="text-center py-16">
-                    <p className="text-lg text-muted-foreground">No products found for "{searchQuery}".</p>
-                </div>
-             )}
-           </div>
+        {productCategories.length > 0 ? (
+            <ProductsClient initialCategories={productCategories} />
         ) : (
-            <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-10 h-auto">
-                {productCategories.map((category) => (
-                  <TabsTrigger key={category.id} value={category.id} className="py-3 text-base">
-                    {category.name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              {filteredCategories.map((category) => (
-                <TabsContent key={category.id} value={category.id}>
-                   <div className="mb-10 text-center md:text-left">
-                      <h2 className="text-3xl md:text-4xl font-bold font-headline">{category.name}</h2>
-                      <p className="text-lg text-muted-foreground mt-2 max-w-3xl mx-auto md:mx-0">{category.description}</p>
-                    </div>
-                  <ProductGrid products={category.products} />
-                </TabsContent>
-              ))}
-            </Tabs>
+            <div className="text-center py-16">
+                <p className="text-lg text-muted-foreground">Could not load products.</p>
+                <p className="text-sm text-muted-foreground mt-2">Please ensure the 'productCategories' collection exists in Firestore and has the correct permissions.</p>
+            </div>
         )}
       </div>
     </div>
