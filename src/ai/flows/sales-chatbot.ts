@@ -70,6 +70,20 @@ const getLeadInfoTool = ai.defineTool(
   }
 );
 
+const getLeadCountTool = ai.defineTool(
+  {
+    name: 'getLeadCountTool',
+    description: "Counts the total number of leads in the company's database. Use this when asked about the total number of leads, inquiries, or contacts.",
+    inputSchema: z.object({}),
+    outputSchema: z.number(),
+  },
+  async () => {
+    const inquiriesRef = collection(db, 'inquiries');
+    const snapshot = await getDocs(inquiriesRef);
+    return snapshot.size;
+  }
+);
+
 
 const SalesChatbotInputSchema = z.object({
   history: z.array(ai.historySchema).optional(),
@@ -86,7 +100,7 @@ const salesChatbotFlow = ai.defineFlow({
     outputSchema: SalesChatbotOutputSchema,
   },
   async (input) => {
-    const availableTools = [companyResearchTool, getLeadInfoTool];
+    const availableTools = [companyResearchTool, getLeadInfoTool, getLeadCountTool];
     const llmResponse = await ai.generate({
         prompt: input.prompt,
         history: input.history,
@@ -109,9 +123,10 @@ const salesChatbotFlow = ai.defineFlow({
 - Our products serve as brand reinforcement (keeping brands top-of-mind), educational tools (visual aids, anatomical models), and are always compliance-focused.
 
 ## Your Tools:
-You have two primary tools to answer questions:
+You have three primary tools to answer questions:
 1.  **getLeadInfo**: Use this FIRST for any questions about a specific person or company that might be an existing lead in our system. Examples: "Tell me about Acme Corp's inquiry", "What is Priya Singh interested in?".
-2.  **companyResearch**: Use this for general web searches about companies that are likely NOT in our lead database. Example: "Research a company called 'Solaris Inc.' that was mentioned in the news".
+2.  **getLeadCountTool**: Use this when asked for the total number of leads or inquiries. Example: "How many leads do we have?".
+3.  **companyResearch**: Use this for general web searches about companies that are likely NOT in our lead database. Example: "Research a company called 'Solaris Inc.' that was mentioned in the news".
 
 ## Your Role:
 - Answer questions from the sales team based on the company information provided above.
