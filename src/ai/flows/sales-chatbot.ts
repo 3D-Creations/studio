@@ -28,7 +28,7 @@ const companyResearchTool = ai.defineTool(
 );
 
 const SalesChatbotInputSchema = z.object({
-  history: z.array(ai.historySchema()).optional(),
+  history: z.array(ai.historySchema).optional(),
   prompt: z.string(),
 });
 export type SalesChatbotInput = z.infer<typeof SalesChatbotInputSchema>;
