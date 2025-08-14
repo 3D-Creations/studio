@@ -31,12 +31,12 @@ export interface ProductCategory {
 }
 
 interface ProductsClientProps {
-    initialCategories: ProductCategory[];
+    categories: ProductCategory[];
 }
 
-export function ProductsClient({ initialCategories }: ProductsClientProps) {
+export function ProductsClient({ categories }: ProductsClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState(initialCategories[0].id);
+  const [activeTab, setActiveTab] = useState(categories.length > 0 ? categories[0].id : '');
   const [sortOption, setSortOption] = useState('default');
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,7 +58,7 @@ export function ProductsClient({ initialCategories }: ProductsClientProps) {
     }
   }
 
-  const filteredCategories = initialCategories.map(category => ({
+  const filteredCategories = categories.map(category => ({
     ...category,
     products: sortProducts(category.products.filter(product =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -66,7 +66,7 @@ export function ProductsClient({ initialCategories }: ProductsClientProps) {
   })).filter(category => category.products.length > 0);
 
   const allFilteredProducts = sortProducts(
-    initialCategories.flatMap(category => category.products)
+    categories.flatMap(category => category.products)
       .filter(product => product.name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
@@ -124,7 +124,7 @@ export function ProductsClient({ initialCategories }: ProductsClientProps) {
         ) : (
             <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-10 h-auto">
-                {initialCategories.map((category) => (
+                {categories.map((category) => (
                   <TabsTrigger key={category.id} value={category.id} className="py-3 text-base">
                     {category.name}
                   </TabsTrigger>

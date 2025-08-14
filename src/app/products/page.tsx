@@ -1,17 +1,18 @@
 
+"use client";
+
+import { useState, useEffect } from 'react';
 import { SplinePlaceholder } from '@/components/spline-placeholder';
 import { ProductsClient, type ProductCategory } from '@/components/products-client';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-
-export const metadata = {
-  title: 'Our Products',
-  description: 'Discover our comprehensive range of innovative products, meticulously crafted to meet your branding and promotional needs.',
-};
+import { Skeleton } from '@/components/ui/skeleton';
 
 async function getProductData(): Promise<ProductCategory[]> {
   try {
     const categoriesCollection = collection(db, 'productCategories');
+    // Note: A composite index might be required in Firestore for this orderBy clause.
+    // If you see errors, you may need to create it in the Firebase console.
     const q = query(categoriesCollection, orderBy('name'));
     const categoriesSnapshot = await getDocs(q);
 
@@ -49,9 +50,18 @@ async function getProductData(): Promise<ProductCategory[]> {
   }
 }
 
+export default function ProductsPage() {
+  const [productCategories, setProductCategories] = useState<ProductCategory[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function ProductsPage() {
-  const productCategories = await getProductData();
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getProductData();
+      setProductCategories(data);
+      setLoading(false);
+    }
+    fetchData();
+  }, []);
 
   return (
     <div className="relative overflow-hidden">
@@ -69,8 +79,26 @@ export default async function ProductsPage() {
       </section>
 
       <div className="container pb-16 md:pb-24">
-        {productCategories.length > 0 ? (
-            <ProductsClient initialCategories={productCategories} />
+        {loading ? (
+            <div className="space-y-12">
+                <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-2 mb-10 h-auto">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                </div>
+                <div className="space-y-4">
+                    <Skeleton className="h-10 w-1/3" />
+                    <Skeleton className="h-6 w-2/3" />
+                </div>
+                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
+                    <Skeleton className="h-80 w-full" />
+                    <Skeleton className="h-80 w-full" />
+                    <Skeleton className="h-80 w-full" />
+                    <Skeleton className="h-80 w-full" />
+                </div>
+            </div>
+        ) : productCategories.length > 0 ? (
+            <ProductsClient categories={productCategories} />
         ) : (
             <div className="text-center py-16">
                 <p className="text-lg text-muted-foreground">Could not load products.</p>
