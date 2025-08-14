@@ -8,6 +8,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Card,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -48,23 +49,29 @@ export function ProductGrid({ products }: ProductGridProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {products.slice(0, visibleProducts).map((product, index) => (
           <Dialog key={product.id || index}>
-            <DialogTrigger asChild>
-              <Card className="flex flex-col overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
-                <CardContent className="p-0">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={400}
-                    height={300}
-                    className="w-full h-48 object-cover"
-                    data-ai-hint={product.hint}
-                  />
-                </CardContent>
-                <div className="flex flex-col flex-grow p-4">
-                  <CardTitle className="font-headline text-lg">{product.name}</CardTitle>
+              <Card className="flex flex-col overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                <DialogTrigger asChild>
+                  <div className="aspect-square w-full relative cursor-pointer">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      className="object-contain p-4"
+                      data-ai-hint={product.hint}
+                    />
+                  </div>
+                </DialogTrigger>
+                <div className="flex flex-col flex-grow p-4 pt-0">
+                   <DialogTrigger asChild>
+                    <CardTitle className="font-headline text-lg flex-grow cursor-pointer hover:underline">{product.name}</CardTitle>
+                   </DialogTrigger>
                 </div>
+                 <CardFooter className="p-4 pt-0">
+                    <Link href="/contact" className={cn(buttonVariants({ size: 'sm' }), "w-full")}>
+                      Inquire Now
+                    </Link>
+                </CardFooter>
               </Card>
-            </DialogTrigger>
             <DialogContent className="max-w-3xl">
               <DialogHeader>
                 <DialogTitle className="font-headline text-3xl mb-2">{product.name}</DialogTitle>
@@ -75,7 +82,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                         src={product.image}
                         alt={product.name}
                         fill
-                        className="object-cover rounded-lg"
+                        className="object-contain rounded-lg"
                         data-ai-hint={product.hint}
                       />
                     </div>
