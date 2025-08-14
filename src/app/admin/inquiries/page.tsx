@@ -33,6 +33,7 @@ async function getInquiries() {
         date: data.createdAt?.toDate()?.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) || new Date().toLocaleString('en-US'),
         status: data.status,
         assignedTo: data.assignedTo || '',
+        fileUrl: data.fileUrl || '',
       }
     });
     return inquiries;

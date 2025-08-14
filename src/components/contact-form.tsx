@@ -5,11 +5,15 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"; 
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useState } from "react";
+
 
 import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,7 +23,10 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { ArrowRight, Loader2 } from "lucide-react"
-import { db } from "@/lib/firebase"
+import { db, storage } from "@/lib/firebase"
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -29,10 +36,18 @@ const formSchema = z.object({
   company: z.string().optional(),
   productInterest: z.string().min(2, "Please specify your product interest."),
   message: z.string().min(10, "Message must be at least 10 characters."),
+  file: z
+    .any()
+    .refine((file) => !file || file.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+    .refine(
+      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
+      ".jpg, .jpeg, .png and .webp files are accepted."
+    ).optional(),
 })
 
 export function ContactForm() {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,11 +59,25 @@ export function ContactForm() {
       company: "",
       productInterest: "",
       message: "",
+      file: undefined,
     },
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
     try {
+      let fileUrl = '';
+      if (values.file) {
+        const file = values.file;
+        const uniqueFileName = `${Date.now()}-${file.name}`;
+        const fileRef = storageRef(storage, `inquiries/${uniqueFileName}`);
+        
+        toast({ title: "Uploading file...", description: "Please wait." });
+        await uploadBytes(fileRef, file);
+        fileUrl = await getDownloadURL(fileRef);
+        toast({ title: "File uploaded!", description: "Your file has been attached." });
+      }
+
       await addDoc(collection(db, "inquiries"), {
         name: values.name,
         email: values.email,
@@ -57,6 +86,7 @@ export function ContactForm() {
         company: values.company || '',
         productInterest: values.productInterest,
         message: values.message,
+        fileUrl: fileUrl,
         createdAt: serverTimestamp(),
         status: 'New',
         assignedTo: ''
@@ -74,6 +104,8 @@ export function ContactForm() {
         description: "There was a problem sending your message. Please try again.",
         variant: "destructive"
       })
+    } finally {
+        setIsSubmitting(false);
     }
   }
 
@@ -181,8 +213,27 @@ export function ContactForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" size="lg" className="w-full md:w-auto" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? (
+        <FormField
+            control={form.control}
+            name="file"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Attach File (Optional)</FormLabel>
+                <FormControl>
+                    <Input 
+                        type="file" 
+                        onChange={(e) => field.onChange(e.target.files ? e.target.files[0] : null)}
+                    />
+                </FormControl>
+                <FormDescription>
+                    Attach a design file or reference image (JPG, PNG, WebP up to 5MB).
+                </FormDescription>
+                <FormMessage />
+                </FormItem>
+            )}
+        />
+        <Button type="submit" size="lg" className="w-full md:w-auto" disabled={isSubmitting}>
+            {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Sending...

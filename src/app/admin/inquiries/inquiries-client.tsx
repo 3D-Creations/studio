@@ -29,7 +29,7 @@ import { Badge } from '@/components/ui/badge'
 import { useEffect, useState } from 'react'
 import { collection, onSnapshot, query, orderBy, doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
-import { Clipboard, ExternalLink, Bot, Loader2, Eye } from 'lucide-react'
+import { Clipboard, ExternalLink, Bot, Loader2, Eye, Paperclip } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast'
 import type { GenerateLeadReplyInput, GenerateLeadReplyOutput } from '@/ai/flows/generate-lead-reply'
+import Link from 'next/link'
 
 export interface Inquiry {
   id: string;
@@ -56,6 +57,7 @@ export interface Inquiry {
   date: string;
   status: 'New' | 'In Progress' | 'Contacted' | 'Closed';
   assignedTo?: string;
+  fileUrl?: string;
 }
 
 const teamMembers = ['Aarav Sharma', 'Priya Singh', 'Rohan Mehta', 'Anika Gupta'];
@@ -91,6 +93,7 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
           date: data.createdAt?.toDate()?.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) || new Date().toLocaleString('en-US'),
           status: data.status || 'New',
           assignedTo: data.assignedTo || '',
+          fileUrl: data.fileUrl || '',
         }
       });
       setInquiries(newInquiries);
@@ -167,7 +170,10 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
                     <DialogTrigger asChild>
                       <div className="cursor-pointer">
                         <div className="font-medium hover:underline">{inquiry.productInterest}</div>
-                        <div className="text-sm text-muted-foreground line-clamp-2">{inquiry.message}</div>
+                        <div className="text-sm text-muted-foreground line-clamp-2 flex items-center gap-2">
+                            {inquiry.fileUrl && <Paperclip className="h-4 w-4 flex-shrink-0" />}
+                            <span>{inquiry.message}</span>
+                        </div>
                       </div>
                     </DialogTrigger>
                     <DialogContent>
@@ -192,6 +198,17 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
                             {inquiry.location && <li><strong>Location:</strong> {inquiry.location}</li>}
                           </ul>
                         </div>
+                        {inquiry.fileUrl && (
+                            <div>
+                                <h4 className="font-semibold text-foreground mb-1">Attachment</h4>
+                                <Link href={inquiry.fileUrl} target="_blank" rel="noopener noreferrer">
+                                    <Button variant="outline" size="sm">
+                                        <Paperclip className="mr-2 h-4 w-4"/>
+                                        View Attached File
+                                    </Button>
+                                </Link>
+                            </div>
+                        )}
                       </div>
                     </DialogContent>
                   </Dialog>
