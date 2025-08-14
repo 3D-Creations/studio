@@ -94,7 +94,7 @@ export function ProductGrid({ products }: ProductGridProps) {
         <DialogContent className="max-w-3xl">
           {selectedProduct && (
             <DialogHeader>
-              <DialogTitle className="font-headline text-3xl mb-2">{selectedProduct.name}</DialogTitle>
+               <DialogTitle className="font-headline text-3xl mb-4">{selectedProduct.name}</DialogTitle>
               <DialogDescriptionPrimitive>
                 <div className="grid md:grid-cols-2 gap-8 items-start">
                   <div className="aspect-square relative">
@@ -107,15 +107,20 @@ export function ProductGrid({ products }: ProductGridProps) {
                     />
                   </div>
                   <div className="space-y-4">
-                     <p className="text-base text-muted-foreground whitespace-pre-wrap">
+                     <div className="space-y-2 text-lg">
+                        <p><span className="font-semibold text-foreground">Name:</span> {selectedProduct.name}</p>
+                        {selectedProduct.price && (
+                            <p><span className="font-semibold text-foreground">Price:</span> {selectedProduct.price}</p>
+                        )}
+                    </div>
+
+                     <p className="text-base text-muted-foreground whitespace-pre-wrap pt-4 border-t">
                         {selectedProduct.description || "No description available."}
                       </p>
-                       {selectedProduct.price && (
-                        <p className="text-lg font-bold text-primary">{selectedProduct.price}</p>
-                      )}
+                      
                       <Link href="/contact" className={cn(
                         buttonVariants({ size: 'lg' }),
-                        "w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity"
+                        "w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity !mt-6"
                       )}>
                         Inquire Now <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
