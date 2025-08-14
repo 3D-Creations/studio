@@ -67,20 +67,22 @@ export function ProductGrid({ products }: ProductGridProps) {
                 />
               </div>
               <div className="flex flex-col flex-grow p-4 pt-0">
-                <CardTitle 
-                    className="font-headline text-lg flex-grow cursor-pointer hover:underline"
-                    onClick={() => setSelectedProduct(product)}
-                >
-                    {product.name}
-                </CardTitle>
-                {product.price && (
-                    <p className="text-sm font-semibold text-primary mt-1">{product.price}</p>
-                )}
-                {product.description && (
-                    <p className="text-sm text-muted-foreground mt-2 line-clamp-1">
-                        {product.description}
+                 <div className="flex-grow">
+                    <p 
+                        className="font-medium text-foreground cursor-pointer hover:underline"
+                        onClick={() => setSelectedProduct(product)}
+                    >
+                        <span className="font-semibold">Name:</span> {product.name}
                     </p>
-                )}
+                    {product.price && (
+                        <p className="text-sm mt-1"><span className="font-semibold">Price:</span> {product.price}</p>
+                    )}
+                    {product.description && (
+                        <p className="text-sm text-muted-foreground mt-2 line-clamp-1">
+                            {product.description}
+                        </p>
+                    )}
+                 </div>
               </div>
               <CardFooter className="p-4 pt-0 mt-auto">
                   <Button size="sm" className="w-full" onClick={() => setSelectedProduct(product)}>
@@ -149,3 +151,4 @@ export function ProductGrid({ products }: ProductGridProps) {
     </div>
   );
 }
+
