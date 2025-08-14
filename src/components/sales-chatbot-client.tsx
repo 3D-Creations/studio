@@ -13,6 +13,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { SalesChatbotInput, SalesChatbotOutput } from '@/ai/flows/sales-chatbot';
+import type { Message as GenkitMessage } from 'genkit';
+
 
 const formSchema = z.object({
   prompt: z.string().min(1, "Message cannot be empty."),
@@ -51,12 +53,14 @@ export function SalesChatbotClient({ salesChatbot }: SalesChatbotClientProps) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     const userMessage: Message = { role: 'user', content: values.prompt };
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+    // Add user message to the local state to display it immediately
+    const currentMessages = [...messages, userMessage];
+    setMessages(currentMessages);
     form.reset();
 
     try {
-      const history = newMessages.slice(0, -1).map(msg => ({ // Send all but the last message as history
+       // Construct the history from all messages so far
+      const history: GenkitMessage[] = currentMessages.slice(0, -1).map(msg => ({
         role: msg.role,
         content: [{ text: msg.content }],
       }));
@@ -87,7 +91,7 @@ export function SalesChatbotClient({ salesChatbot }: SalesChatbotClientProps) {
                 <div className="text-center text-muted-foreground pt-16">
                   <Bot className="mx-auto h-12 w-12 mb-4" />
                   <p className="text-lg">Welcome! How can I help you today?</p>
-                  <p className="text-sm">You can ask things like "Research Acme Corp" or "What are some good conversation starters for a lead interested in lenticular printing?".</p>
+                  <p className="text-sm">You can ask things like "Research Acme Corp", "how many leads do we have?" or "list down the recent leads".</p>
                 </div>
               )}
               {messages.map((message, index) => (
