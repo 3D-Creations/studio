@@ -60,7 +60,6 @@ export interface Inquiry {
   fileUrl?: string;
 }
 
-const teamMembers = ['Aarav Sharma', 'Priya Singh', 'Rohan Mehta', 'Anika Gupta'];
 const statuses: Inquiry['status'][] = ['New', 'In Progress', 'Contacted', 'Closed'];
 
 interface InquiriesClientProps {
@@ -70,15 +69,17 @@ interface InquiriesClientProps {
 
 export function InquiriesClient({ initialInquiries, generateLeadReply }: InquiriesClientProps) {
   const [inquiries, setInquiries] = useState<Inquiry[]>(initialInquiries);
+  const [teamMembers, setTeamMembers] = useState<string[]>([]);
   const [aiReply, setAiReply] = useState<GenerateLeadReplyOutput | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
+    // Listen for real-time updates on inquiries
     const inquiriesCollection = collection(db, 'inquiries');
-    const q = query(inquiriesCollection, orderBy('createdAt', 'desc'));
+    const qInquiries = query(inquiriesCollection, orderBy('createdAt', 'desc'));
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const unsubscribeInquiries = onSnapshot(qInquiries, (snapshot) => {
       const newInquiries: Inquiry[] = snapshot.docs.map(doc => {
         const data = doc.data();
         return {
@@ -99,7 +100,19 @@ export function InquiriesClient({ initialInquiries, generateLeadReply }: Inquiri
       setInquiries(newInquiries);
     });
 
-    return () => unsubscribe();
+    // Listen for real-time updates on team members
+    const teamCollection = collection(db, 'teamMembers');
+    const qTeam = query(teamCollection, orderBy('name'));
+
+    const unsubscribeTeam = onSnapshot(qTeam, (snapshot) => {
+        const newTeamMembers = snapshot.docs.map(doc => doc.data().name as string);
+        setTeamMembers(newTeamMembers);
+    });
+
+    return () => {
+        unsubscribeInquiries();
+        unsubscribeTeam();
+    };
   }, []);
   
   const handleUpdate = async (id: string, field: 'status' | 'assignedTo', value: string) => {
