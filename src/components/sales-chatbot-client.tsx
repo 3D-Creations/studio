@@ -51,11 +51,12 @@ export function SalesChatbotClient({ salesChatbot }: SalesChatbotClientProps) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     const userMessage: Message = { role: 'user', content: values.prompt };
-    setMessages((prev) => [...prev, userMessage]);
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
     form.reset();
 
     try {
-      const history = messages.map(msg => ({
+      const history = newMessages.slice(0, -1).map(msg => ({ // Send all but the last message as history
         role: msg.role,
         content: [{ text: msg.content }],
       }));
