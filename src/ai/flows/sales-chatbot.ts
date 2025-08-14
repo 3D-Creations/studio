@@ -11,6 +11,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
+import {toZod} from 'genkit/next';
 
 const companyResearchTool = ai.defineTool(
   {
@@ -28,7 +29,7 @@ const companyResearchTool = ai.defineTool(
 );
 
 const SalesChatbotInputSchema = z.object({
-  history: z.array(z.any()),
+  history: z.array(toZod(ai.historySchema())).optional(),
   prompt: z.string(),
 });
 export type SalesChatbotInput = z.infer<typeof SalesChatbotInputSchema>;
@@ -36,33 +37,38 @@ export type SalesChatbotInput = z.infer<typeof SalesChatbotInputSchema>;
 const SalesChatbotOutputSchema = z.string();
 export type SalesChatbotOutput = z.infer<typeof SalesChatbotOutputSchema>;
 
-const prompt = ai.definePrompt({
-    name: 'salesChatbotPrompt',
-    input: {schema: SalesChatbotInputSchema},
-    output: {schema: SalesChatbotOutputSchema},
-    tools: [companyResearchTool],
-    prompt: `You are an expert AI assistant for the sales team at "3D Creations Private Limited", a company specializing in 3D lenticular printing and custom corporate gifts.
+const salesChatbotFlow = ai.defineFlow({
+    name: 'salesChatbotFlow',
+    inputSchema: SalesChatbotInputSchema,
+    outputSchema: SalesChatbotOutputSchema,
+  },
+  async (input) => {
+    const llmResponse = await ai.generate({
+        prompt: input.prompt,
+        history: input.history,
+        tools: [companyResearchTool],
+        system: `You are an expert AI assistant for the sales team at "3D Creations Private Limited", a company specializing in 3D lenticular printing and custom corporate gifts.
 
 Your role is to provide quick, accurate, and helpful information to the sales team. You can answer general questions, provide insights on leads, and perform deep research on companies using your available tools.
 
-Be friendly, professional, and concise in your answers.
-`,
+Be friendly, professional, and concise in your answers.`
+    });
+    
+    if (llmResponse.toolRequests.length > 0) {
+        const toolResponse = await llmResponse.callTools();
+        const finalResponse = await ai.generate({
+            prompt: input.prompt,
+            history: [...llmResponse.history, ...toolResponse],
+            tools: [companyResearchTool]
+        });
+        return finalResponse.text;
+    }
+
+    return llmResponse.text;
 });
 
 export async function salesChatbot(
   input: SalesChatbotInput
 ): Promise<SalesChatbotOutput> {
-    const llmResponse = await prompt(input);
-    const output = llmResponse.output();
-    if (!output) {
-      if (llmResponse.hasToolRequests()) {
-        const toolResponse = await llmResponse.performTools();
-        const finalResponse = await prompt(input, {
-          history: [...llmResponse.history(), ...toolResponse],
-        });
-        return finalResponse.text();
-      }
-      throw new Error('No output from prompt');
-    }
-    return output;
+    return await salesChatbotFlow(input);
 }
