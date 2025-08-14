@@ -50,9 +50,9 @@ export function ProductsClient({ categories }: ProductsClientProps) {
   const sortProducts = (products: Product[]) => {
     switch (sortOption) {
       case 'az':
-        return [...products].sort((a, b) => a.name.localeCompare(b.name));
+        return [...products].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
       case 'za':
-        return [...products].sort((a, b) => b.name.localeCompare(a.name));
+        return [...products].sort((a, b) => (b.name || '').localeCompare(a.name || ''));
       default:
         return products;
     }
@@ -61,13 +61,13 @@ export function ProductsClient({ categories }: ProductsClientProps) {
   const filteredCategories = categories.map(category => ({
     ...category,
     products: sortProducts(category.products.filter(product =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      product.name && product.name.toLowerCase().includes(searchQuery.toLowerCase())
     )),
   })).filter(category => category.products.length > 0);
 
   const allFilteredProducts = sortProducts(
     categories.flatMap(category => category.products)
-      .filter(product => product.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      .filter(product => product.name && product.name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const isSearching = searchQuery.length > 0;
