@@ -11,11 +11,11 @@ import { Logo } from '@/components/logo';
 import { useAuth } from '@/hooks/use-auth';
 
 const navLinks = [
-  { href: '/about', label: 'About Us' },
   { href: '/products', label: 'Products' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/pharma-special', label: 'Pharma Special' },
   { href: '/contact', label: 'Contact' },
+  { href: '/about', label: 'About Us' },
 ];
 
 export function Header() {

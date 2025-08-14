@@ -1,12 +1,13 @@
+
 import Link from 'next/link';
 import { Dna, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import { Logo } from '@/components/logo';
 
 const navLinks = [
-  { href: '/about', label: 'About' },
   { href: '/products', label: 'Products' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/contact', label: 'Contact' },
+  { href: '/about', label: 'About' },
 ];
 
 const socialLinks = [
