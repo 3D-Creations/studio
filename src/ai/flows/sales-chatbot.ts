@@ -11,7 +11,6 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
-import {toZod} from 'genkit/next';
 
 const companyResearchTool = ai.defineTool(
   {
@@ -29,7 +28,7 @@ const companyResearchTool = ai.defineTool(
 );
 
 const SalesChatbotInputSchema = z.object({
-  history: z.array(toZod(ai.historySchema())).optional(),
+  history: z.array(ai.historySchema()).optional(),
   prompt: z.string(),
 });
 export type SalesChatbotInput = z.infer<typeof SalesChatbotInputSchema>;
@@ -58,7 +57,7 @@ Be friendly, professional, and concise in your answers.`
         const toolResponse = await llmResponse.callTools();
         const finalResponse = await ai.generate({
             prompt: input.prompt,
-            history: [...llmResponse.history, ...toolResponse],
+            history: [...(input.history || []), ...llmResponse.history, ...toolResponse],
             tools: [companyResearchTool]
         });
         return finalResponse.text;
