@@ -6,8 +6,9 @@ import { Logo } from '@/components/logo';
 const navLinks = [
   { href: '/products', label: 'Products' },
   { href: '/portfolio', label: 'Portfolio' },
+  { href: '/pharma-special', label: 'Pharma Special' },
   { href: '/contact', label: 'Contact' },
-  { href: '/about', label: 'About' },
+  { href: '/about', label: 'About Us' },
 ];
 
 const socialLinks = [
