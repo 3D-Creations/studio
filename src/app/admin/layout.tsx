@@ -55,31 +55,25 @@ export default function AdminLayout({
             <SidebarMenu>
               <SidebarMenuItem>
                 <Link href="/admin" passHref>
-                  <SidebarMenuButton asChild tooltip="Dashboard">
-                    <>
-                      <LayoutDashboard />
-                      <span>Dashboard</span>
-                    </>
+                  <SidebarMenuButton tooltip="Dashboard">
+                    <LayoutDashboard />
+                    <span>Dashboard</span>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <Link href="/admin/inquiries" passHref>
-                  <SidebarMenuButton asChild tooltip="Inquiries">
-                    <>
-                      <Inbox />
-                      <span>Inquiries</span>
-                    </>
+                  <SidebarMenuButton tooltip="Inquiries">
+                    <Inbox />
+                    <span>Inquiries</span>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <Link href="/admin/sales-chatbot" passHref>
-                  <SidebarMenuButton asChild tooltip="AI Sales Chatbot">
-                    <>
-                      <MessageSquare />
-                      <span>AI Sales Chatbot</span>
-                    </>
+                  <SidebarMenuButton tooltip="AI Sales Chatbot">
+                    <MessageSquare />
+                    <span>AI Sales Chatbot</span>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
