@@ -47,6 +47,12 @@ export interface Product {
   hint: string;
   description?: string;
   price?: string;
+  size?: string;
+  isFeatured?: boolean;
+  createdAt?: {
+    seconds: number;
+    nanoseconds: number;
+  };
 }
 
 export interface ProductCategory {
@@ -77,6 +83,9 @@ async function getProductData(): Promise<ProductCategory[]> {
                 hint: productData.hint,
                 description: productData.description,
                 price: productData.price,
+                size: productData.size,
+                isFeatured: productData.isFeatured,
+                createdAt: productData.createdAt,
             };
             });
 

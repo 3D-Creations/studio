@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useState } from 'react';
-import { Search, Filter, X } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Search, Filter, X, Sparkles } from 'lucide-react';
 import { ProductGrid } from '@/components/product-grid';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -28,6 +28,12 @@ export interface Product {
   hint: string;
   description?: string;
   price?: string;
+  size?: string;
+  isFeatured?: boolean;
+  createdAt?: {
+    seconds: number;
+    nanoseconds: number;
+  };
 }
 
 export interface ProductCategory {
@@ -55,30 +61,64 @@ export function ProductsClient({ categories }: ProductsClientProps) {
   }
 
   const sortProducts = (products: Product[]) => {
+    let sortedProducts = [...products];
     switch (sortOption) {
       case 'az':
-        return [...products].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        sortedProducts.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        break;
       case 'za':
-        return [...products].sort((a, b) => (b.name || '').localeCompare(a.name || ''));
+        sortedProducts.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
+        break;
+      case 'newest':
+        sortedProducts.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        break;
       default:
-        return products;
+        // Default sort might be by name or whatever Firestore gives
+        sortedProducts.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        break;
     }
+    return sortedProducts;
   }
   
-  const filteredCategories = categories
-    .map(category => ({
-      ...category,
-      products: sortProducts(category.products.filter(product =>
-        product.name && product.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )),
-    }))
-    .filter(category => category.products.length > 0)
-    .filter(category => selectedCategory === 'all' || category.id === selectedCategory);
+  const allProducts = useMemo(() => categories.flatMap(c => c.products), [categories]);
+
+  const featuredProducts = useMemo(() => 
+    sortProducts(allProducts.filter(p => p.isFeatured))
+  , [allProducts, sortOption]);
+
+  const filteredCategories = useMemo(() => {
+    const regularProducts = allProducts.filter(p => !p.isFeatured);
     
-  const allFilteredProducts = sortProducts(
-    categories.flatMap(category => category.products)
-      .filter(product => product.name && product.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+    const productsToFilter = (selectedCategory === 'all' 
+      ? regularProducts 
+      : regularProducts.filter(p => categories.find(c => c.products.some(cp => cp.id === p.id))?.id === selectedCategory)
+    ).filter(p => p.name && p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    const sorted = sortProducts(productsToFilter);
+
+    if (selectedCategory !== 'all') {
+        const cat = categories.find(c => c.id === selectedCategory);
+        return cat ? [{ ...cat, products: sorted }] : [];
+    }
+
+    // Group by category again if 'all' is selected
+    const grouped = sorted.reduce((acc, product) => {
+        const category = categories.find(cat => cat.products.some(p => p.id === product.id));
+        if (category) {
+            if (!acc[category.id]) {
+                acc[category.id] = { ...category, products: [] };
+            }
+            acc[category.id].products.push(product);
+        }
+        return acc;
+    }, {} as Record<string, ProductCategory>);
+
+    return Object.values(grouped);
+  }, [searchQuery, sortOption, selectedCategory, categories, allProducts]);
+    
+  const allFilteredProductsForSearch = useMemo(() => 
+    sortProducts(allProducts.filter(product => product.name && product.name.toLowerCase().includes(searchQuery.toLowerCase())))
+  , [allProducts, searchQuery, sortOption]);
 
 
   const isSearching = searchQuery.length > 0;
@@ -119,12 +159,13 @@ export function ProductsClient({ categories }: ProductsClientProps) {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuLabel>Sort by Name</DropdownMenuLabel>
+                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
                  <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup value={sortOption} onValueChange={setSortOption}>
                   <DropdownMenuRadioItem value="default">Default</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="az">A-Z</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="za">Z-A</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="newest">Newest</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="az">Name: A-Z</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="za">Name: Z-A</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -133,12 +174,12 @@ export function ProductsClient({ categories }: ProductsClientProps) {
         <div className="space-y-16">
           {isSearching ? (
              <>
-               {allFilteredProducts.length > 0 ? (
+               {allFilteredProductsForSearch.length > 0 ? (
                   <div>
                       <h2 className="text-3xl md:text-4xl font-bold font-headline mb-10 text-center md:text-left">
                         Search Results for "{searchQuery}"
                       </h2>
-                      <ProductGrid products={allFilteredProducts} />
+                      <ProductGrid products={allFilteredProductsForSearch} />
                   </div>
                ) : (
                   <div className="text-center py-16">
@@ -148,6 +189,19 @@ export function ProductsClient({ categories }: ProductsClientProps) {
              </>
           ) : (
              <>
+              {featuredProducts.length > 0 && selectedCategory === 'all' && (
+                <section>
+                    <div className="mb-10 text-center md:text-left">
+                        <h2 className="text-3xl md:text-4xl font-bold font-headline flex items-center gap-3 justify-center md:justify-start">
+                            <Sparkles className="h-8 w-8 text-accent" />
+                            Featured Products
+                        </h2>
+                        <p className="text-lg text-muted-foreground mt-2 max-w-3xl mx-auto md:mx-0">Our curated selection of top products.</p>
+                    </div>
+                    <ProductGrid products={featuredProducts} />
+                </section>
+              )}
+
               {filteredCategories.length > 0 ? (
                 filteredCategories.map((category) => (
                     <section key={category.id}>

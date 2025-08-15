@@ -30,6 +30,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { generateProductDescription } from "@/ai/flows/generate-product-description";
 import React, { useState } from "react";
 import { AddCategoryDialog } from "./add-category-dialog";
+import { Switch } from "@/components/ui/switch";
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
 const ACCEPTED_MEDIA_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif", "video/mp4", "video/webm"];
@@ -40,6 +41,8 @@ const formSchema = z.object({
   hint: z.string().min(2, "Hint must be at least 2 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   price: z.string().min(1, "Price is required."),
+  size: z.string().optional(),
+  isFeatured: z.boolean().default(false),
   categoryId: z.string({
     required_error: "Please select a product category.",
   }),
@@ -70,6 +73,8 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
       hint: "",
       description: "",
       price: "On Enquiry",
+      size: "",
+      isFeatured: false,
       files: [],
     },
   });
@@ -117,6 +122,8 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
     formData.append("description", values.description);
     formData.append("categoryId", values.categoryId);
     formData.append("price", values.price);
+    formData.append("size", values.size || "");
+    formData.append("isFeatured", String(values.isFeatured));
     values.files.forEach(file => {
         formData.append('files', file);
     });
@@ -129,11 +136,11 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
       });
       form.reset();
       onProductAdded(); 
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       toast({
         title: "Error",
-        description: "Failed to add product. Please try again.",
+        description: error.message || "Failed to add product. Please try again.",
         variant: "destructive",
       });
     }
@@ -240,6 +247,19 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
                 )}
             />
         </div>
+         <FormField
+              control={form.control}
+              name="size"
+              render={({ field }) => (
+              <FormItem>
+                  <FormLabel>Size (Optional)</FormLabel>
+                  <FormControl>
+                  <Input placeholder="e.g., 12x16 inches, 500ml" {...field} />
+                  </FormControl>
+                  <FormMessage />
+              </FormItem>
+              )}
+          />
         
         <FormField
           control={form.control}
@@ -287,6 +307,28 @@ export function AddProductForm({ categories, onProductAdded }: AddProductFormPro
                 </FormItem>
             )}
         />
+        
+        <FormField
+            control={form.control}
+            name="isFeatured"
+            render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <div className="space-y-0.5">
+                    <FormLabel>Feature this product?</FormLabel>
+                    <FormDescription>
+                        Featured products appear in a special section at the top of the products page. (Max 10)
+                    </FormDescription>
+                </div>
+                <FormControl>
+                    <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    />
+                </FormControl>
+                </FormItem>
+            )}
+         />
+
 
         <Button type="submit" disabled={isSubmitting || isGenerating}>
           {isSubmitting ? (

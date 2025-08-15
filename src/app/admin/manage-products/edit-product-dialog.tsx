@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/dialog';
 import Image from "next/image";
 import { DeleteProductButton } from "./delete-product-button";
+import { Switch } from "@/components/ui/switch";
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
 const ACCEPTED_MEDIA_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif", "video/mp4", "video/webm"];
@@ -42,6 +43,8 @@ const formSchema = z.object({
   hint: z.string().min(2, "Hint must be at least 2 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   price: z.string().min(1, "Price is required."),
+  size: z.string().optional(),
+  isFeatured: z.boolean().default(false),
   files: z
     .array(z.any())
     .optional()
@@ -72,6 +75,8 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
       hint: product.hint || "",
       description: product.description || "",
       price: product.price || "On Enquiry",
+      size: product.size || "",
+      isFeatured: product.isFeatured || false,
       files: [],
     },
   });
@@ -120,6 +125,8 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
     formData.append("hint", values.hint);
     formData.append("description", values.description);
     formData.append("price", values.price);
+    formData.append("size", values.size || "");
+    formData.append("isFeatured", String(values.isFeatured));
     formData.append("existingMedia", JSON.stringify(currentMedia));
     if (values.files) {
         values.files.forEach(file => {
@@ -135,11 +142,11 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
       });
       onProductUpdated();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       toast({
         title: "Error",
-        description: "Failed to update product. Please try again.",
+        description: error.message || "Failed to update product. Please try again.",
         variant: "destructive",
       });
     }
@@ -224,19 +231,34 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
                     )}
                 />
                 </div>
-                 <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Price</FormLabel>
-                        <FormControl>
-                        <Input placeholder="e.g., 500 or On Enquiry" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <FormField
+                        control={form.control}
+                        name="price"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Price</FormLabel>
+                            <FormControl>
+                            <Input placeholder="e.g., 500 or On Enquiry" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="size"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Size (Optional)</FormLabel>
+                            <FormControl>
+                            <Input placeholder="e.g., 12x16 inches" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                </div>
                 <FormField
                 control={form.control}
                 name="description"
@@ -280,6 +302,26 @@ export function EditProductDialog({ product, categoryId, isOpen, onClose, onProd
                             Upload additional files for this product.
                         </FormDescription>
                         <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="isFeatured"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                            <FormLabel>Feature this product?</FormLabel>
+                            <FormDescription>
+                                Featured products appear in a special section at the top. (Max 10)
+                            </FormDescription>
+                        </div>
+                        <FormControl>
+                            <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            />
+                        </FormControl>
                         </FormItem>
                     )}
                 />

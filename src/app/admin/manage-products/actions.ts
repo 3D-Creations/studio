@@ -3,7 +3,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db, storage } from "@/lib/firebase";
-import { addDoc, collection, doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, deleteDoc, updateDoc, serverTimestamp, query, where, getDocs, writeBatch, limit } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes, deleteObject } from "firebase/storage";
 import { ProductMedia } from "./page";
 
@@ -37,12 +37,22 @@ export async function addProduct(formData: FormData) {
   const description = formData.get("description") as string;
   const categoryId = formData.get("categoryId") as string;
   const price = formData.get("price") as string;
+  const size = formData.get("size") as string;
+  const isFeatured = formData.get("isFeatured") === "true";
   const files = formData.getAll("files") as File[];
 
   if (!name || !hint || !description || !categoryId || files.length === 0 || !price) {
     throw new Error("Missing required form fields.");
   }
   
+  if (isFeatured) {
+    const featuredQuery = query(collection(db, `productCategories/${categoryId}/products`), where("isFeatured", "==", true), limit(10));
+    const featuredSnapshot = await getDocs(featuredQuery);
+    if (featuredSnapshot.size >= 10) {
+      throw new Error("You can only feature a maximum of 10 products.");
+    }
+  }
+
   const uploadPromises = files.map(file => uploadFile(file, 'products'));
   const media = await Promise.all(uploadPromises);
 
@@ -52,7 +62,10 @@ export async function addProduct(formData: FormData) {
     hint: hint,
     description: description,
     price: price,
+    size: size,
+    isFeatured: isFeatured,
     media: media,
+    createdAt: serverTimestamp(),
   });
 
   revalidatePath("/products");
@@ -64,6 +77,8 @@ export async function updateProduct(categoryId: string, productId: string, formD
   const hint = formData.get("hint") as string;
   const description = formData.get("description") as string;
   const price = formData.get("price") as string;
+  const size = formData.get("size") as string;
+  const isFeatured = formData.get("isFeatured") === "true";
   const newFiles = formData.getAll("files") as File[];
   const existingMediaString = formData.get("existingMedia") as string;
 
@@ -73,6 +88,15 @@ export async function updateProduct(categoryId: string, productId: string, formD
 
   const productDocRef = doc(db, `productCategories/${categoryId}/products/${productId}`);
   
+  if (isFeatured) {
+    const featuredQuery = query(collection(db, `productCategories/${categoryId}/products`), where("isFeatured", "==", true), limit(10));
+    const featuredSnapshot = await getDocs(featuredQuery);
+    const isCurrentlyFeatured = featuredSnapshot.docs.some(doc => doc.id === productId);
+    if (featuredSnapshot.size >= 10 && !isCurrentlyFeatured) {
+      throw new Error("You can only feature a maximum of 10 products.");
+    }
+  }
+
   let existingMedia: ProductMedia[] = [];
   if (existingMediaString) {
       try {
@@ -93,6 +117,8 @@ export async function updateProduct(categoryId: string, productId: string, formD
     hint,
     description,
     price,
+    size,
+    isFeatured,
     media: finalMedia,
   });
 
@@ -131,5 +157,6 @@ export async function deleteProduct(categoryId: string, productId: string, media
     revalidatePath("/products");
     revalidatePath("/admin/manage-products");
 }
+
 
 

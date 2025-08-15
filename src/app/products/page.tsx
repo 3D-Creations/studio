@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { SplinePlaceholder } from '@/components/spline-placeholder';
-import { ProductsClient, type ProductCategory, type ProductMedia } from '@/components/products-client';
+import { ProductsClient, type ProductCategory, type ProductMedia, type Product } from '@/components/products-client';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,7 +20,7 @@ async function getProductData(): Promise<ProductCategory[]> {
         const productsCollection = collection(categoryDoc.ref, 'products');
         const productsSnapshot = await getDocs(productsCollection);
         
-        const products = productsSnapshot.docs.map(prodDoc => {
+        const products: Product[] = productsSnapshot.docs.map(prodDoc => {
              const productData = prodDoc.data();
              // This handles both the old `image` field and the new `media` array
              let media: ProductMedia[] = [];
@@ -37,6 +37,9 @@ async function getProductData(): Promise<ProductCategory[]> {
                 hint: productData.hint,
                 description: productData.description || '',
                 price: productData.price || 'On Enquiry',
+                size: productData.size,
+                isFeatured: productData.isFeatured,
+                createdAt: productData.createdAt,
              }
         });
 

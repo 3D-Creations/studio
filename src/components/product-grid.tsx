@@ -1,5 +1,5 @@
 
-"use client"
+"use client";
 
 import { useState } from 'react';
 import Image from 'next/image';
@@ -24,11 +24,22 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '@/components/ui/carousel';
-import { ArrowRight, Loader2, Video, FileImage } from 'lucide-react';
+import { ArrowRight, Loader2, Video, FileImage, Sparkles } from 'lucide-react';
 import { type Product } from '@/components/products-client';
 import { cn } from '@/lib/utils';
+import { Badge } from './ui/badge';
 
 const PRODUCTS_PER_PAGE = 10;
+
+// Helper to check if a product is new
+const isNew = (createdAt?: { seconds: number; nanoseconds: number }) => {
+  if (!createdAt) return false;
+  const twoWeeksAgo = new Date();
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+  const productDate = new Date(createdAt.seconds * 1000);
+  return productDate > twoWeeksAgo;
+};
+
 
 interface ProductGridProps {
   products: Product[];
@@ -80,6 +91,17 @@ export function ProductGrid({ products }: ProductGridProps) {
                     <div className="w-full h-full bg-muted flex items-center justify-center">
                         <FileImage className="h-10 w-10 text-muted-foreground" />
                     </div>
+                )}
+                {isNew(product.createdAt) && (
+                    <Badge variant="default" className="absolute top-2 left-2 bg-gradient-to-r from-accent to-primary">
+                        New Arrival
+                    </Badge>
+                )}
+                {product.isFeatured && (
+                     <Badge variant="secondary" className="absolute top-2 right-2">
+                        <Sparkles className="mr-1 h-3 w-3" />
+                        Featured
+                    </Badge>
                 )}
               </div>
               <div className="flex flex-col flex-grow p-3">
@@ -158,6 +180,9 @@ export function ProductGrid({ products }: ProductGridProps) {
                         <p><span className="font-semibold text-foreground">Name:</span> {selectedProduct.name}</p>
                         {selectedProduct.price && (
                             <p><span className="font-semibold text-foreground">Price:</span> {selectedProduct.price}</p>
+                        )}
+                        {selectedProduct.size && (
+                            <p><span className="font-semibold text-foreground">Size:</span> {selectedProduct.size}</p>
                         )}
                     </div>
 
