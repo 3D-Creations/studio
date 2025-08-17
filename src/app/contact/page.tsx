@@ -1,9 +1,10 @@
+
 import { ContactForm } from '@/components/contact-form';
 import { SplinePlaceholder } from '@/components/spline-placeholder';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { Mail, MapPin, Phone, MessageSquare } from 'lucide-react';
+import { Mail, MapPin, Phone, MessageSquare, User, Printer } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata = {
@@ -15,25 +16,36 @@ const contactDetails = [
   {
     icon: <MapPin className="h-6 w-6 text-primary" />,
     title: 'Our Office',
-    value: '123 Innovation Drive, Mumbai, IN 400001',
+    value: 'A/102, Ranjit Studio, Dadasaheb Phalke Road, Dadar (E), Mumbai-400014',
+  },
+  {
+    icon: <User className="h-6 w-6 text-primary" />,
+    title: 'Varun Agarwal',
+    value: '7666903710',
+    href: 'tel:7666903710',
   },
   {
     icon: <Mail className="h-6 w-6 text-primary" />,
     title: 'Email Us',
-    value: 'contact@3dcreations.dev',
-    href: 'mailto:contact@3dcreations.dev',
+    value: 'varun@3dindia.co.in',
+    href: 'mailto:varun@3dindia.co.in',
   },
   {
     icon: <Phone className="h-6 w-6 text-primary" />,
-    title: 'Call Us',
-    value: '+91 123 456 7890',
-    href: 'tel:+911234567890',
+    title: 'Telephone',
+    value: '022-24144014',
+    href: 'tel:02224144014',
+  },
+    {
+    icon: <Printer className="h-6 w-6 text-primary" />,
+    title: 'Fax',
+    value: '022-24114633',
   },
   {
     icon: <MessageSquare className="h-6 w-6 text-primary" />,
     title: 'WhatsApp',
     value: 'Chat with us',
-    href: 'https://wa.me/911234567890',
+    href: 'https://wa.me/917666903710',
   },
 ];
 
@@ -89,14 +101,14 @@ export default function ContactPage() {
             </Card>
              <div className="aspect-video bg-muted rounded-lg shadow-lg">
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.71833779532!2d72.88560941540307!3d19.07609038708688!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1628682173154!5m2!1sen!2sin"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.503378526514!2d72.85303537520447!3d19.0416040821568!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7cf2f9e422f9d%3A0x88e7b9b4b005177b!2sRanjit%20Studios!5e0!3m2!1sen!2sin!4v1755106519154!5m2!1sen!2sin"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
                     allowFullScreen={false}
                     loading="lazy"
                     className="rounded-lg"
-                    title="Google Map of Mumbai"
+                    title="Google Map of our office"
                 ></iframe>
             </div>
           </div>

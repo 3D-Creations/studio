@@ -46,9 +46,10 @@ export function Footer() {
           <div>
             <h4 className="font-headline font-semibold mb-4">Contact</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>123 Innovation Drive, Mumbai, IN</li>
-              <li><a href="mailto:contact@3dcreations.dev" className="hover:text-primary">contact@3dcreations.dev</a></li>
-              <li><a href="tel:+911234567890" className="hover:text-primary">+91 123 456 7890</a></li>
+              <li>A/102, Ranjit Studio, Dadar (E), Mumbai-400014</li>
+              <li><a href="mailto:varun@3dindia.co.in" className="hover:text-primary">varun@3dindia.co.in</a></li>
+              <li><a href="tel:7666903710" className="hover:text-primary">Varun: 7666903710</a></li>
+              <li>Tel: 022-24144014</li>
             </ul>
           </div>
           <div>
