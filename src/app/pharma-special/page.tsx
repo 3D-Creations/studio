@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { CheckCircle, Syringe, Pill, Stethoscope } from 'lucide-react';
+import { CheckCircle, Syringe, Pill, Stethoscope, Gem, Cog, BadgeCheck, PackageCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SplinePlaceholder } from '@/components/spline-placeholder';
 
@@ -26,26 +26,29 @@ const advantages = [
     },
   ];
 
-const caseStudies = [
+const qualityCommitments = [
   {
-    title: 'New Drug Launch Campaign',
-    client: 'CardioLife Pharmaceuticals',
-    challenge: 'To create a memorable launch kit for a new cardiovascular drug that would engage busy cardiologists.',
-    solution: 'We designed a 3D lenticular visual aid demonstrating the drug\'s mechanism of action, paired with a high-quality, branded desk set. The kit was both educational and practical.',
-    result: 'The campaign saw a 40% increase in doctor engagement compared to previous launches and received overwhelmingly positive feedback.',
-    image: 'https://placehold.co/500x350.png',
-    hint: 'medical presentation',
+    icon: <Gem className="h-8 w-8 text-primary" />,
+    title: 'Material Excellence',
+    description: 'We source only the highest-grade, non-toxic materials suitable for the healthcare environment.',
   },
   {
-    title: 'National Doctors\' Day Gifting',
-    client: 'NeuroCare Inc.',
-    challenge: 'To appreciate their network of neurologists with a unique gift that was both premium and relevant.',
-    solution: 'A custom-designed 3D paperweight showing the human brain, along with a personalized leather-bound notebook and a premium pen.',
-    result: 'The gift was highly appreciated, strengthening relationships and reinforcing NeuroCare\'s commitment to the medical community.',
-    image: 'https://placehold.co/500x350.png',
-    hint: 'corporate gift set',
+    icon: <Cog className="h-8 w-8 text-primary" />,
+    title: 'Precision Manufacturing',
+    description: 'Our state-of-the-art process ensures every detail is captured with accuracy and consistency.',
+  },
+  {
+    icon: <BadgeCheck className="h-8 w-8 text-primary" />,
+    title: 'Regulatory Adherence',
+    description: 'We stay current with industry marketing codes to ensure our products are both beautiful and compliant.',
+  },
+   {
+    icon: <PackageCheck className="h-8 w-8 text-primary" />,
+    title: 'Secure Packaging',
+    description: 'Every item is packaged securely to guarantee pristine condition upon arrival.',
   },
 ];
+
 
 export default function PharmaSpecialPage() {
   return (
@@ -88,30 +91,22 @@ export default function PharmaSpecialPage() {
       <section className="py-16 md:py-24">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold font-headline">Case Studies</h2>
-            <p className="text-lg text-muted-foreground mt-2">Real-world examples of our impact.</p>
+            <h2 className="text-3xl md:text-4xl font-bold font-headline">Our Commitment to Quality &amp; Compliance</h2>
+            <p className="text-lg text-muted-foreground mt-2">Building trust through excellence in every step.</p>
           </div>
-          <div className="space-y-16">
-            {caseStudies.map((study, index) => (
-              <div key={index} className="grid md:grid-cols-2 gap-12 items-center">
-                <div className={`md:order-${index % 2 === 0 ? '1' : '2'}`}>
-                  <Image
-                    src={study.image}
-                    alt={study.title}
-                    width={500}
-                    height={350}
-                    className="rounded-lg shadow-lg w-full h-auto"
-                    data-ai-hint={study.hint}
-                  />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            {qualityCommitments.map((commitment) => (
+              <Card key={commitment.title} className="p-6 border-2 border-transparent hover:border-primary/50 transition-all duration-300 hover:shadow-lg bg-secondary/30">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mx-auto mb-5">
+                    {commitment.icon}
                 </div>
-                <div className={`space-y-4 md:order-${index % 2 === 0 ? '2' : '1'}`}>
-                  <h3 className="text-2xl font-bold font-headline text-primary">{study.client}</h3>
-                  <h4 className="text-xl font-semibold font-headline">{study.title}</h4>
-                  <p><strong className="text-foreground">Challenge:</strong> <span className="text-muted-foreground">{study.challenge}</span></p>
-                  <p><strong className="text-foreground">Solution:</strong> <span className="text-muted-foreground">{study.solution}</span></p>
-                  <p className="border-l-4 border-accent pl-4 italic"><strong className="text-foreground">Result:</strong> <span className="text-muted-foreground">{study.result}</span></p>
-                </div>
-              </div>
+                <CardHeader className="text-center p-0">
+                  <CardTitle className="font-headline text-lg">{commitment.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center p-0 mt-2">
+                  <p className="text-muted-foreground text-sm">{commitment.description}</p>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
