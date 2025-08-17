@@ -109,6 +109,7 @@ export default function ContactPage() {
                     loading="lazy"
                     className="rounded-lg"
                     title="Google Map of our office"
+                    referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
             </div>
           </div>
