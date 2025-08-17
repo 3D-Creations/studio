@@ -67,7 +67,7 @@ export default function AboutPage() {
 
       {/* Company Story & Mission */}
       <section className="py-16 md:py-24 bg-secondary/50">
-        <div className="container grid md:grid-cols-2 gap-12 items-center">
+        <div className="container grid md:grid-cols-2 gap-12 items-start">
           <div className="space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold font-headline">Our Story</h2>
             <p className="text-muted-foreground">
