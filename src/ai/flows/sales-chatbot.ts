@@ -25,8 +25,11 @@ const companyResearchTool = ai.defineTool(
     outputSchema: z.string(),
   },
   async (input) => {
-    const { output } = await googleAI.search(input.companyName);
-    return JSON.stringify(output);
+     const { text } = await ai.generate({
+        system: `You are a web research agent. Your goal is to find information about the given company and provide a concise summary.`,
+        prompt: `Research the company: ${input.companyName}`,
+      });
+      return text;
   }
 );
 
