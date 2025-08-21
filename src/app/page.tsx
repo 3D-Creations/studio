@@ -190,7 +190,7 @@ export default function Home() {
       <section id="clients" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 md:px-6">
           <h2 className="text-center text-2xl font-bold font-headline text-muted-foreground mb-10">
-            Trusted by Industry Leaders
+            Trusted by 50+ Industry Leaders
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
             {clientLogos.map((logo, index) => (
