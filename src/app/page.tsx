@@ -59,13 +59,21 @@ const portfolioItems = [
   { src: 'https://images.unsplash.com/photo-1567688535100-5dc79f1ca57e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwcm9kdWN0JTIwYnJvY2h1cmV8ZW58MHx8fHwxNzU0OTE2NTA5fDA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Promotional Brochure', hint: 'product brochure' },
 ];
 
-const clientLogos = [
+const clientLogosRow1 = [
   { src: 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwaGFybWFjZXV0aWNhbCUyMGxvZ298ZW58MHx8fHwxNzU0OTE2NTA4fDA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Pharma Client 1', hint: 'pharmaceutical logo' },
   { src: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx0ZWNoJTIwY29tcGFueXxlbnwwfHx8fDE3NTQ5MTY1MDh8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Corporate Client 2', hint: 'tech company' },
   { src: 'https://images.unsplash.com/photo-1636249253913-40e83d5423e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxoZWFsdGhjYXJlJTIwbG9nb3xlbnwwfHx8fDE3NTQ5MTY1MDh8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Pharma Client 3', hint: 'healthcare logo' },
   { src: 'https://images.unsplash.com/photo-1704918605018-6449befbc85b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjcmVhdGl2ZSUyMGFnZW5jeXxlbnwwfHx8fDE3NTQ5MTY1MDh8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Ad Agency 4', hint: 'creative agency' },
   { src: 'https://images.unsplash.com/photo-1596088359637-8d614753fb28?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxiaW90ZWNoJTIwbG9nb3xlbnwwfHx8fDE3NTQ5MTY1MDl8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Pharma Client 5', hint: 'biotech logo' },
 ];
+
+const clientLogosRow2 = [
+  { src: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmaW5hbmNlJTIwbG9nb3xlbnwwfHx8fDE3NTU1MzExNDB8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Finance Client', hint: 'finance logo' },
+  { src: 'https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZXRhaWwlMjBsb2dvfGVufDB8fHx8fDE3NTU1MzExNDB8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Retail Client', hint: 'retail logo' },
+  { src: 'https://images.unsplash.com/photo-1611162616802-3d8a1b2b8a7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBsb2dvfGVufDB8fHx8fDE3NTU1MzExNDF8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Construction Client', hint: 'construction logo' },
+  { src: 'https://images.unsplash.com/photo-1549998197-473523b32eac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhdXRvbW90aXZlJTIwbG9nb3xlbnwwfHx8fDE3NTU1MzExNDF8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Automotive Client', hint: 'automotive logo' },
+  { src: 'https://images.unsplash.com/photo-1611162616899-8240b353d5a4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxlZHVjYXRpb24lMjBsb2dvfGVufDB8fHx8fDE3NTU1MzExNDF8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Education Client', hint: 'education logo' },
+]
 
 const testimonials = [
   {
@@ -189,21 +197,38 @@ export default function Home() {
       {/* Client Logos */}
       <section id="clients" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-center text-2xl font-bold font-headline text-muted-foreground mb-10">
+          <h2 className="text-center text-2xl font-bold font-headline text-muted-foreground mb-12">
             Trusted by 50+ Industry Leaders
           </h2>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
-            {clientLogos.map((logo, index) => (
-              <Image
-                key={index}
-                src={logo.src}
-                alt={logo.alt}
-                width={150}
-                height={50}
-                className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-                data-ai-hint={logo.hint}
-              />
-            ))}
+          <div className="relative flex flex-col gap-8 overflow-hidden">
+            <div className="flex flex-row items-center justify-center gap-12 animate-marquee [animation-play-state:running] hover:[animation-play-state:paused]">
+              {[...clientLogosRow1, ...clientLogosRow1].map((logo, index) => (
+                  <Image
+                      key={`row1-${index}`}
+                      src={logo.src}
+                      alt={logo.alt}
+                      width={150}
+                      height={50}
+                      className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                      data-ai-hint={logo.hint}
+                    />
+              ))}
+            </div>
+            <div className="flex flex-row items-center justify-center gap-12 animate-marquee-reverse [animation-play-state:running] hover:[animation-play-state:paused]">
+                {[...clientLogosRow2, ...clientLogosRow2].map((logo, index) => (
+                  <Image
+                      key={`row2-${index}`}
+                      src={logo.src}
+                      alt={logo.alt}
+                      width={150}
+                      height={50}
+                      className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                      data-ai-hint={logo.hint}
+                    />
+              ))}
+            </div>
+             <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background to-transparent"></div>
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background to-transparent"></div>
           </div>
         </div>
       </section>
