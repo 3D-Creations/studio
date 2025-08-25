@@ -60,7 +60,7 @@ const portfolioItems = [
 ];
 
 const clientLogosRow1 = [
-  { src: 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwaGFybWFjZXV0aWNhbCUyMGxvZ298ZW58MHx8fHwxNzU0OTE2NTA4fDA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Pharma Client 1', hint: 'pharmaceutical logo' },
+  { src: 'https://firebasestorage.googleapis.com/v0/b/d-creations-cd15a.firebasestorage.app/o/clientLogos%2F1755770886261-l1.png?alt=media&token=0b247d48-402e-4a4e-8618-18a88c2278a1', alt: 'Corporate Client 2', hint: 'tech company' },
   { src: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx0ZWNoJTIwY29tcGFueXxlbnwwfHx8fDE3NTQ5MTY1MDh8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Corporate Client 2', hint: 'tech company' },
   { src: 'https://images.unsplash.com/photo-1636249253913-40e83d5423e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxoZWFsdGhjYXJlJTIwbG9nb3xlbnwwfHx8fDE3NTQ5MTY1MDh8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Pharma Client 3', hint: 'healthcare logo' },
   { src: 'https://images.unsplash.com/photo-1704918605018-6449befbc85b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjcmVhdGl2ZSUyMGFnZW5jeXxlbnwwfHx8fDE3NTQ5MTY1MDh8MA&ixlib=rb-4.1.0&q=80&w=1080', alt: 'Ad Agency 4', hint: 'creative agency' },
